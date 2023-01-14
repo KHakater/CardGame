@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8dc61902920666f4c9b11aa28cd18de0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - DPcardPrefab: {fileID: 7573383782794198233, guid: ed545336a89985f4bbf00f87ce2d4ce7, type: 3}
+  - GM: {instanceID: 0}
+  - MirrorObj: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
