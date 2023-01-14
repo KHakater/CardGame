@@ -34,8 +34,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
                     if (GM.FieldList[Num].transform.childCount == 0)
                     {
                         card.cardParent = this.transform; // カードの親要素を自分（アタッチされてるオブジェクト）にする
-                        card.GetComponent<CardController>().model.MoveNumber = 1;
-                        GM.MoveCard(card.GetComponent<CardController>().model.CardPlace,Num,0);
+                        GM.MoveCard(Num,card.name);
                         card.GetComponent<CardController>().model.CardPlace = Num;
                         //card.GetComponent<CardController>().model.CardPlace カードの位置情報取得
                     }

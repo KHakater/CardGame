@@ -16,7 +16,6 @@ public class CardModel
     public string CTM;
     public bool MSelectable = false;
     public int CardPlace;
-    public int MoveNumber;
     public CardModel(int cardID, bool playerCard, int CP) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
@@ -30,6 +29,5 @@ public class CardModel
         PlayerCard = playerCard;
         CTM = cardEntity.CT.ToString();
         CardPlace = CP;
-        MoveNumber = 0;
     }
 }

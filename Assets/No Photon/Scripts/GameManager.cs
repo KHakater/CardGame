@@ -28,9 +28,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public List<int> Mashand = new List<int>() { };
     public List<int> NoDeck = new List<int>() { };
     public List<int> Nohand = new List<int>() { };
+    public List<GameObject> MasObjhand = new List<GameObject>(){};
+    public List<GameObject> NoObjhand = new List<GameObject>(){};
+    public int HandNameNum = 0;//カードの情報を名前で管理
     //PH　
     public void Awake()
     {
+        HandNameNum = 0;
         PhotonNetwork.IsMessageQueueRunning = true;
         if (instance == null)
         {
@@ -109,7 +113,16 @@ public class GameManager : MonoBehaviourPunCallbacks
                 // デッキの一番上のカードを抜き取り、手札に加える
                 int cardID = MasDeck[0];
                 MasDeck.RemoveAt(0);
-                photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH");
+                if (ImMorN){
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH","M"+ HandNameNum);
+                    HandNameNum += 1;
+                }
+                else
+                {
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH","N"+  HandNameNum);
+                    HandNameNum += 1;
+                }
+                
             }
         }
         else//NOにドロー   
@@ -124,7 +137,15 @@ public class GameManager : MonoBehaviourPunCallbacks
                 // デッキの一番上のカードを抜き取り、手札に加える
                 int cardID = NoDeck[0];
                 NoDeck.RemoveAt(0);
-                photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH");
+                if (ImMorN){
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH","M"+ HandNameNum);
+                    HandNameNum += 1;
+                }
+                else
+                {
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH","N"+  HandNameNum);
+                    HandNameNum += 1;
+                }
             }
 
         }
@@ -282,11 +303,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void CreateCard(int cardID, int NumI, string PorE)
+    public void CreateCard(int cardID, int NumI, string PorE,string cardname)
     {
         CardController card = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         // GameObject card2 = PhotonNetwork.Instantiate("Card-Field", new Vector3(0, 0, 0), Quaternion.identity);
         // CardController card = card2.GetComponent<CardController>();
+        card.gameObject.name = cardname;
         if (PorE == "MH")//いずれ手札、フィールドなどによって分けていく
         {
             if (ImMorN)
@@ -344,46 +366,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void MoveCard(int beforeP, int afterP, int childNum)
+    public void MoveCard(int afterP,string PPname)
     {
-        int BP1 = 0; int AP1 = 0; int siblingIndex = 0;
-        if (beforeP < 15)
-        {
-            BP1 = 14 - beforeP;
-        }
-        else if (beforeP > 19 && beforeP < 22)
-        {
-            BP1 = 21 - (beforeP - 20);
-            BP1 = beforeP;
-            int ii = FieldList[BP1].childCount;
-            
-            for (int i = 0; i < ii; i++)
-            {
-                Debug.Log(FieldList[BP1].GetChild(i).GetComponent<CardController>().model.MoveNumber);
-                if (FieldList[BP1].GetChild(i).GetComponent<CardController>().model.MoveNumber == 1)
-                {
-                    Debug.Log(FieldList[BP1].GetChild(i));
-                    siblingIndex = FieldList[BP1].GetChild(i).GetSiblingIndex (); 
-                    FieldList[BP1].GetChild(i).GetComponent<CardController>().model.MoveNumber = 0;
-                    break;
-                }
-            }
-        }
-
-        if (afterP < 15)
-        {
-            AP1 = 14 - afterP;
-        }
-        else if (afterP > 19 && afterP < 22)
-        {
-            AP1 = 21 - (afterP - 20);
-        }
-        photonView.RPC(nameof(PunMoveCard), RpcTarget.Others, BP1, AP1, siblingIndex);
+        photonView.RPC(nameof(PunMoveCard), RpcTarget.Others, afterP, PPname);
     }
     [PunRPC]
-    public void PunMoveCard(int beP, int afP, int CN)
+    public void PunMoveCard(int afP, string Pname)
     {
-        GameObject card = FieldList[beP].GetChild(CN).gameObject;
+        if (afP < 15)
+        {
+            afP = 14 - afP;
+        }
+        else if (afP > 19 && afP < 22)
+        {
+            afP= 21 - (afP - 20);
+        }
+        GameObject card = GameObject.Find(Pname);
         card.transform.SetParent(FieldList[afP]);
     }
 }
