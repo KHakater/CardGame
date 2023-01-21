@@ -4,6 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+
+public class ManaStatus
+{
+    public int manatype { get; set; }
+    public int maxmana;
+    public int nowmana;
+    public Sprite ImageMana;
+    public ManaStatus(int Mtype, int Mmax, int Mnow)
+    {
+        manatype = Mtype;
+        maxmana = Mmax;
+        nowmana = Mnow;
+    }
+}
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] CardController cardPrefab;
@@ -11,6 +25,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] public List<Transform> FieldList;
     [SerializeField] Text playerLeaderHPText;
     [SerializeField] Text enemyLeaderHPText;
+    public List<ManaStatus> Manacon = new List<ManaStatus>();
     bool isMasterTurn = true;
     public bool isMyTurn = true;
     List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
@@ -28,12 +43,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     public List<int> Mashand = new List<int>() { };
     public List<int> NoDeck = new List<int>() { };
     public List<int> Nohand = new List<int>() { };
-    public List<GameObject> MasObjhand = new List<GameObject>(){};
-    public List<GameObject> NoObjhand = new List<GameObject>(){};
-    public int HandNameNum = 0;//カードの情報を名前で管理
-    //PH　
+    public List<GameObject> MasObjhand = new List<GameObject>() { };
+    public List<GameObject> NoObjhand = new List<GameObject>() { };
+    public int HandNameNum = 0;
     public void Awake()
     {
+        // var newStatus = new ManaStatus(1,1,1);
+        // Manacon.Add(newStatus);
+        // Manacon[0].manatype = 1;
         HandNameNum = 0;
         PhotonNetwork.IsMessageQueueRunning = true;
         if (instance == null)
@@ -113,16 +130,17 @@ public class GameManager : MonoBehaviourPunCallbacks
                 // デッキの一番上のカードを抜き取り、手札に加える
                 int cardID = MasDeck[0];
                 MasDeck.RemoveAt(0);
-                if (ImMorN){
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH","M"+ HandNameNum);
+                if (ImMorN)
+                {
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "M" + HandNameNum);
                     HandNameNum += 1;
                 }
                 else
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH","N"+  HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "N" + HandNameNum);
                     HandNameNum += 1;
                 }
-                
+
             }
         }
         else//NOにドロー   
@@ -137,13 +155,14 @@ public class GameManager : MonoBehaviourPunCallbacks
                 // デッキの一番上のカードを抜き取り、手札に加える
                 int cardID = NoDeck[0];
                 NoDeck.RemoveAt(0);
-                if (ImMorN){
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH","M"+ HandNameNum);
+                if (ImMorN)
+                {
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "M" + HandNameNum);
                     HandNameNum += 1;
                 }
                 else
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH","N"+  HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "N" + HandNameNum);
                     HandNameNum += 1;
                 }
             }
@@ -303,7 +322,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void CreateCard(int cardID, int NumI, string PorE,string cardname)
+    public void CreateCard(int cardID, int NumI, string PorE, string cardname)
     {
         CardController card = Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         // GameObject card2 = PhotonNetwork.Instantiate("Card-Field", new Vector3(0, 0, 0), Quaternion.identity);
@@ -366,7 +385,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void MoveCard(int afterP,string PPname)
+    public void MoveCard(int afterP, string PPname)
     {
         photonView.RPC(nameof(PunMoveCard), RpcTarget.Others, afterP, PPname);
     }
@@ -379,7 +398,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else if (afP > 19 && afP < 22)
         {
-            afP= 21 - (afP - 20);
+            afP = 21 - (afP - 20);
         }
         GameObject card = GameObject.Find(Pname);
         card.transform.SetParent(FieldList[afP]);
