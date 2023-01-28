@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 7773273328375144910}
   - component: {fileID: 6465982818570189546}
   m_Layer: 5
-  m_Name: Mana-? (2)
+  m_Name: /
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 8532659549229337515}
   - component: {fileID: 8262448666516953770}
   m_Layer: 5
-  m_Name: Mana-? (1)
+  m_Name: Mana-Max
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 6614424969150819669}
   - component: {fileID: 2179421623775648541}
   m_Layer: 5
-  m_Name: Mana-?
+  m_Name: Mana-now
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,12 +398,10 @@ GameObject:
   - component: {fileID: 5529180902432103085}
   - component: {fileID: 5529180902432103087}
   - component: {fileID: 5529180902432103086}
-  - component: {fileID: 6990727574024708140}
   - component: {fileID: 8341547021819116681}
-  - component: {fileID: 7218192089506892599}
-  - component: {fileID: 5653424988721353230}
-  - component: {fileID: 1571715201371328252}
   - component: {fileID: 1872096512728653012}
+  - component: {fileID: 5461306856220647396}
+  - component: {fileID: 7321628576919323335}
   m_Layer: 5
   m_Name: mana-Field
   m_TagString: Untagged
@@ -475,19 +473,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6990727574024708140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5529180902432103084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cfa3db11d21a1642bca2ac749a802d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardParent: {fileID: 0}
 --- !u!225 &8341547021819116681
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -500,51 +485,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &7218192089506892599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5529180902432103084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d45d1026e5f7187498e99af7dcb5563c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameText: {fileID: 5529180902591654226}
-  powerText: {fileID: 0}
-  costText: {fileID: 2179421623775648541}
-  defenseText: {fileID: 0}
-  iconImage: {fileID: 6970259071393727019}
-  canAttackPanel: {fileID: 0}
-  canSelectPanel: {fileID: 0}
---- !u!114 &5653424988721353230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5529180902432103084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 585374c1e5a076b4199a1b37c229528b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  view: {fileID: 0}
-  ID: 0
---- !u!114 &1571715201371328252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5529180902432103084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d0a749568ed2d3459e1c51df14a2070, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1872096512728653012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -567,6 +507,37 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5461306856220647396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529180902432103084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b3a82c80afcc04c8df80ac72e9f020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 0}
+  view: {fileID: 0}
+  ID: 0
+--- !u!114 &7321628576919323335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529180902432103084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebffc1323e4de604d8fffc6473a80b70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 5529180902591654226}
+  MaxText: {fileID: 8262448666516953770}
+  nowText: {fileID: 2179421623775648541}
+  iconImage: {fileID: 6970259071393727019}
 --- !u!1 &5529180902591654224
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,28 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-
-public class ManaStatus
-{
-    public int manatype { get; set; }
-    public int maxmana;
-    public int nowmana;
-    public Sprite ImageMana;
-    public ManaStatus(int Mtype, int Mmax, int Mnow)
-    {
-        manatype = Mtype;
-        maxmana = Mmax;
-        nowmana = Mnow;
-    }
-}
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] CardController cardPrefab;
+    [SerializeField] Manacontroller ManaPrefab;
     [SerializeField] Transform playerHand, enemyHand;
+    [SerializeField] Transform playerMana, enemyMana;
     [SerializeField] public List<Transform> FieldList;
     [SerializeField] Text playerLeaderHPText;
     [SerializeField] Text enemyLeaderHPText;
-    public List<ManaStatus> Manacon = new List<ManaStatus>();
+    public Dictionary<int, Manacontroller> ManaDic = new Dictionary<int, Manacontroller>();
+    public Dictionary<int, Manacontroller> noManaDic = new Dictionary<int, Manacontroller>();
     bool isMasterTurn = true;
     public bool isMyTurn = true;
     List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
@@ -48,9 +37,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int HandNameNum = 0;
     public void Awake()
     {
-        // var newStatus = new ManaStatus(1,1,1);
-        // Manacon.Add(newStatus);
-        // Manacon[0].manatype = 1;
         HandNameNum = 0;
         PhotonNetwork.IsMessageQueueRunning = true;
         if (instance == null)
@@ -318,7 +304,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            Debug.Log(GMSelectPhaze);
+            if (ImMorN)
+            {
+                photonView.RPC(nameof(ManaCreate), RpcTarget.All, 9000, 1, true);
+            }
         }
     }
     [PunRPC]
@@ -402,5 +391,59 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         GameObject card = GameObject.Find(Pname);
         card.transform.SetParent(FieldList[afP]);
+    }
+    [PunRPC]
+    public void ManaCreate(int Mnum, int useful, bool MasCard)//usefulが１で使える状態で追加　０で使えない状態で追加
+    {
+        if (MasCard)
+        {
+            if (ManaDic.ContainsKey(Mnum))//既に存在する種類のマナの場合、最大数を増やす
+            {
+                ManaDic[Mnum].model.maxmana += 1;
+                ManaDic[Mnum].model.nowmana += useful;
+                ManaDic[Mnum].view.Show(ManaDic[Mnum].model);
+            }
+            else
+            {
+                Manacontroller mana = Instantiate(ManaPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                if (ImMorN)
+                {
+                    mana.Init(Mnum, true, useful);//どちらのプレイヤーの情報か
+                    mana.transform.SetParent(playerMana);
+                    ManaDic.Add(Mnum, mana);
+                }
+                else
+                {
+                    mana.Init(Mnum, false, useful);
+                    mana.transform.SetParent(enemyMana);
+                    ManaDic.Add(Mnum, mana);
+                }
+            }
+        }
+        else
+        {
+            if (noManaDic.ContainsKey(Mnum))//既に存在する種類のマナの場合、最大数を増やす
+            {
+                noManaDic[Mnum].model.maxmana += 1;
+                noManaDic[Mnum].model.nowmana += useful;
+                noManaDic[Mnum].view.Show(noManaDic[Mnum].model);
+            }
+            else
+            {
+                Manacontroller mana = Instantiate(ManaPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                if (ImMorN)
+                {
+                    mana.Init(Mnum, false, useful);//どちらのプレイヤーの情報か
+                    mana.transform.SetParent(enemyMana);
+                    noManaDic.Add(Mnum, mana);
+                }
+                else
+                {
+                    mana.Init(Mnum, true, useful);
+                    mana.transform.SetParent(playerMana);
+                    noManaDic.Add(Mnum, mana);
+                }
+            }
+        }
     }
 }

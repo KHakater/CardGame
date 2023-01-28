@@ -561,8 +561,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 7573383782794198233, guid: ed545336a89985f4bbf00f87ce2d4ce7, type: 3}
+  ManaPrefab: {fileID: 5461306856220647396, guid: 94acf752406979f4a938a1eb460d2e68, type: 3}
   playerHand: {fileID: 2103580387}
   enemyHand: {fileID: 1106669051}
+  playerMana: {fileID: 55776907}
+  enemyMana: {fileID: 381465809}
   FieldList:
   - {fileID: 418950357}
   - {fileID: 1328589810}

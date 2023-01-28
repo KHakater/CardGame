@@ -45,6 +45,7 @@ MonoBehaviour:
   - DrawCard
   - PlDeckCustom
   - PunMoveCard
+  - ManaCreate
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
