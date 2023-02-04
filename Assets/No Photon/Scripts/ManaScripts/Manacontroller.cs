@@ -13,14 +13,18 @@ public class Manacontroller : MonoBehaviour
         view = GetComponent<ManaView>();
     }
 
-    public void Init(int cardID, bool playerCard,int useful) // カードを生成した時に呼ばれる関数
+    public void Init(int cardID, bool playerCard,int maxmana,int useful) // カードを生成した時に呼ばれる関数
     {
-        model = new ManaModel(cardID, playerCard,useful); // カードデータを生成
+        model = new ManaModel(cardID, playerCard,1,useful); // カードデータを生成
         view.Show(model); // 表示
         ID = cardID;
     }
     public void DestroyCard(CardController card)
     {
         Destroy(card.gameObject);
+    }
+    private void OnButton()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>().OnButton(model.CardID);
     }
 }

@@ -10,14 +10,14 @@ public class ManaModel : MonoBehaviour
     public int nowmana;
     public Sprite icon;
     public bool PlayerCard = false;
-    public int color;
-    public ManaModel(int cardID, bool playerCard,int useful) // データを受け取り、その処理
+    public List<int> color;
+    public ManaModel(int cardID, bool playerCard,int max,int useful) // データを受け取り、その処理
     {
         ManaEntity me = Resources.Load<ManaEntity>("ManaEntityList/Mana" + cardID);
         CardID = me.ManaID;
         Name = me.ManaName;
-        maxmana = me.MaxMana;
-        nowmana = me.NowMana;
+        maxmana = max;
+        nowmana = useful;
         icon = me.ImageMana;
         PlayerCard = playerCard;
         color = me.ManaColor;

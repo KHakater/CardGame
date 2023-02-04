@@ -8,6 +8,6 @@ public class ManaEntity :ScriptableObject
     public string ManaName;
     public int MaxMana;
     public int NowMana;
-    public int ManaColor;
+    public List<int> ManaColor;
     public Sprite ImageMana;
 }
