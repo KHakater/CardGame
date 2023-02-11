@@ -23,8 +23,8 @@ public class Manacontroller : MonoBehaviour
     {
         Destroy(card.gameObject);
     }
-    private void OnButton()
+    public void OnButton()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().OnButton(model.CardID);
+        GameObject.Find("GameManager").GetComponent<GameManager>().OnButton(model.CardID,this.gameObject.GetComponent<Manacontroller>());//エラー
     }
 }

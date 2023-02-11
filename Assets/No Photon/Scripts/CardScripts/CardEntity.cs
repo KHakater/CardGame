@@ -7,7 +7,7 @@ public class CardEntity : ScriptableObject
 {
     public int cardID;
     public new string name;
-    public int cost;
+    public List<int> manaList = new List<int>();
     public int power;
     public int Defence;
     public Sprite icon;

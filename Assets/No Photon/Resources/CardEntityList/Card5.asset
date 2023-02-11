@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: 5
   name: 5
-  cost: 1
+  manaList: 01000000
   power: 1
   Defence: 1
   icon: {fileID: 0}

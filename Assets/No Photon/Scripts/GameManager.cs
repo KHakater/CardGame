@@ -7,15 +7,14 @@ using Photon.Realtime;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] CardController cardPrefab;
-    [SerializeField] Manacontroller ManaPrefab, SelectManaPrefab;
+    [SerializeField] Manacontroller ManaPrefab;
+    [SerializeField] Manacontroller SelectManaPrefab;
     [SerializeField] Transform playerHand, enemyHand;
     [SerializeField] Transform playerMana, enemyMana;
     [SerializeField] public List<Transform> FieldList;
     [SerializeField] Text playerLeaderHPText;
     [SerializeField] Text enemyLeaderHPText;
-    public Dictionary<int, Manacontroller> ManaDic = new Dictionary<int, Manacontroller>();
-    public Dictionary<int, Manacontroller> noManaDic = new Dictionary<int, Manacontroller>();
-    public Dictionary<int, Manacontroller> TempDic = new Dictionary<int, Manacontroller>();
+    public Dictionary<int, Manacontroller> ManaDic, noManaDic, TempDic, PayManaDic = new Dictionary<int, Manacontroller>();
     bool isMasterTurn = true;
     public bool isMyTurn = true;
     List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
@@ -40,6 +39,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject scroll;
     public GameObject content;
     public bool ClickMode = false;
+    public List<int> TempIDList;
+    public bool ifFinish;
     public void Awake()
     {
         HandNameNum = 0;
@@ -95,6 +96,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             ImMorN = false;
         }
+        ManaDic = new Dictionary<int, Manacontroller>() { };
+        noManaDic = new Dictionary<int, Manacontroller>() { };
         StartGame();
     }
     void StartGame()
@@ -313,7 +316,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            photonView.RPC(nameof(ManaCreate), RpcTarget.All, 1000, 1, false);
+            photonView.RPC(nameof(ManaCreate), RpcTarget.All, 1000, 1, true);
         }
     }
     [PunRPC]
@@ -403,9 +406,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (MasCard)
         {
-            if (ManaDic.ContainsKey(Mnum))//既に存在する種類のマナの場合、最大数を増やす
+            if (ManaDic.TryGetValue(Mnum, out var item))//既に存在する種類のマナの場合、最大数を増やす
             {
-                ManaDic[Mnum].model.maxmana += 1;
+                item.model.maxmana += 1;
                 ManaDic[Mnum].model.nowmana += useful;
                 ManaDic[Mnum].view.Show(ManaDic[Mnum].model);
             }
@@ -428,7 +431,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            if (noManaDic.ContainsKey(Mnum))//既に存在する種類のマナの場合、最大数を増やす
+            if (noManaDic.TryGetValue(Mnum, out var item2))//既に存在する種類のマナの場合、最大数を増やす
             {
                 noManaDic[Mnum].model.maxmana += 1;
                 noManaDic[Mnum].model.nowmana += useful;
@@ -453,9 +456,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Activation(bool morn,List<int> NeedMana)//カードの発動に対して呼ばれる
+    public void Activation(bool morn, List<int> NeedMana, int afterP, string PPname)//カードの発動に対して呼ばれる
     {
-        scroll.SetActive(true);
         if (morn)//テンポラリーマナリストを作成
         {
             TempDic = ManaDic;
@@ -464,14 +466,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             TempDic = noManaDic;
         }
-        for (int i = 0; i < NeedMana.Count; i++)
-        {
-            ColorSet(NeedMana[i]);
-            StartCoroutine(Col());
-        }
+        PayManaDic.Clear();
+        ifFinish = false;
+        scroll.SetActive(true);
+        StartCoroutine(Col1(morn,NeedMana,afterP,PPname));
     }
-    public void ColorSet(int colornum)
+    public void ColorSet(int colornum)//1とか9とか色が代入される
     {
+        foreach (Transform child in content.transform)
+        {
+            Destroy(child.gameObject);
+        }
         foreach (var value in TempDic)
         {
             if (value.Value.model.color.Contains(colornum))//支払うべきマナと同色のマナを検索
@@ -481,17 +486,58 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
     }
-    public void OnButton(int ID)
+    public void OnButton(int ID, Manacontroller M)//追加の処理
     {
         if (ClickMode)
         {
+            PayManaDic.Add(ID, M);
+            TempIDList.Add(ID);
             TempDic[ID].model.nowmana -= 1;
             ClickMode = false;
         }
     }
-    IEnumerator Col()
+    public void ManaBack()//戻るボタンは既に一つ以上マナを選択したあとにしか表示されないように！！
     {
-        ClickMode = true;
-        yield return new WaitUntil(()=>ClickMode = false);
+        if (ClickMode)
+        {
+            TempDic[TempIDList.Count - 1].model.nowmana += 1;
+            PayManaDic.Remove(TempIDList[TempIDList.Count - 1]);//最後に追加したマナを取り消し
+            TempIDList.Remove(TempIDList.Count - 1);
+            ClickMode = false;
+        }
+    }
+    public void Cancel()//マナの支払いをキャンセル
+    {
+        if (ClickMode)
+        {
+            PayManaDic.Clear();
+            scroll.SetActive(false);
+            ifFinish = true;
+            ClickMode = false;
+        }
+    }
+    IEnumerator Col1(bool b,List<int> needL,int ap,string s)//大きなループ　支払い終わったら返す
+    {
+        while (PayManaDic.Count <= needL.Count)
+        {
+            ColorSet(needL[PayManaDic.Count]);
+            ClickMode = true;
+            yield return new WaitWhile(() => ClickMode);
+        }
+        if (needL.Count >= PayManaDic.Count)
+        {
+            MoveCard(ap, s);
+            if (b)//テンポラリーマナリストを適用
+            {
+                ManaDic = TempDic;
+            }
+            else
+            {
+                noManaDic = TempDic;
+            }
+            scroll.SetActive(false);
+        }
+        yield break;
+        //yield return new WaitUntil(() => PayManaDic.Count >= i);
     }
 }

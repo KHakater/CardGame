@@ -16,5 +16,5 @@ MonoBehaviour:
   ManaName: red
   MaxMana: 0
   NowMana: 0
-  ManaColor: 10
+  ManaColor: 01000000
   ImageMana: {fileID: 0}

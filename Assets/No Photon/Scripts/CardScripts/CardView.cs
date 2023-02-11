@@ -15,7 +15,7 @@ public class CardView : MonoBehaviourPunCallbacks
         nameText.text = cardModel.name;
         powerText.text = "ATK:" + cardModel.power.ToString();
         defenseText.text = "DEF:" + cardModel.power.ToString();
-        costText.text = cardModel.cost.ToString();
+        //costText.text = cardModel.cost.ToString();
         iconImage.sprite = cardModel.icon;
     }
     public void SetCanAttackPanel(bool flag)

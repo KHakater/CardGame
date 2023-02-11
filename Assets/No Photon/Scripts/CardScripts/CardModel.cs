@@ -6,7 +6,7 @@ public class CardModel
 {
     public int CardID;
     public string name;
-    public int cost;
+    public List<int> Mlist = new List<int>();
     public int power;
     public int Defence;
     public Sprite icon;
@@ -21,7 +21,7 @@ public class CardModel
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
         CardID = cardEntity.cardID;
         name = cardEntity.name;
-        cost = cardEntity.cost;
+        Mlist = cardEntity.manaList;
         power = cardEntity.power;
         Defence = cardEntity.Defence;
         icon = cardEntity.icon;
