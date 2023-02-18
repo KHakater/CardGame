@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] Text playerLeaderHPText;
     [SerializeField] Text enemyLeaderHPText;
     public Dictionary<int, Manacontroller> ManaDic, noManaDic, TempDic, PayManaDic = new Dictionary<int, Manacontroller>();
+    public Dictionary<int, int> PayQuantity = new Dictionary<int, int>();
+    public List<int> PayOrder = new List<int>();
     bool isMasterTurn = true;
     public bool isMyTurn = true;
     List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
@@ -39,7 +41,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject scroll;
     public GameObject content;
     public bool ClickMode = false;
-    public List<int> TempIDList;
     public bool ifFinish;
     public void Awake()
     {
@@ -467,9 +468,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             TempDic = noManaDic;
         }
         PayManaDic.Clear();
+        PayQuantity.Clear();
+        PayOrder.Clear();
         ifFinish = false;
         scroll.SetActive(true);
-        StartCoroutine(Col1(morn,NeedMana,afterP,PPname));
+        StartCoroutine(Col1(morn, NeedMana, afterP, PPname));
     }
     public void ColorSet(int colornum)//1とか9とか色が代入される
     {
@@ -477,33 +480,57 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Destroy(child.gameObject);
         }
-        foreach (var value in TempDic)
+        foreach (var value in TempDic)//一時的マナリストの中から
         {
             if (value.Value.model.color.Contains(colornum))//支払うべきマナと同色のマナを検索
             {
                 Manacontroller smana = Instantiate(SelectManaPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 smana.transform.SetParent(content.transform);//条件に合うマナを作成・表示
+                smana.Init(value.Key, true, value.Value.model.maxmana, value.Value.model.nowmana);
             }
         }
+        Debug.Log(colornum);
     }
     public void OnButton(int ID, Manacontroller M)//追加の処理
     {
         if (ClickMode)
         {
-            PayManaDic.Add(ID, M);
-            TempIDList.Add(ID);
+            if (PayManaDic.TryGetValue(M.ID, out var item2))//既に支払い候補にあるマナ
+            {
+                var t = PayQuantity[ID];
+                PayQuantity[ID] = t + 1;
+            }
+            else
+            {
+                PayManaDic.Add(ID, M);//個数の管理どうする？
+                PayQuantity.Add(ID, 1);
+            }
             TempDic[ID].model.nowmana -= 1;
             ClickMode = false;
+            PayOrder.Add(ID);
         }
     }
     public void ManaBack()//戻るボタンは既に一つ以上マナを選択したあとにしか表示されないように！！
     {
         if (ClickMode)
         {
-            TempDic[TempIDList.Count - 1].model.nowmana += 1;
-            PayManaDic.Remove(TempIDList[TempIDList.Count - 1]);//最後に追加したマナを取り消し
-            TempIDList.Remove(TempIDList.Count - 1);
-            ClickMode = false;
+            if (PayOrder.Count > 0)
+            {
+                var v = PayOrder[PayOrder.Count - 1];//マナを表す四桁の数字
+                TempDic[v].model.nowmana += 1;
+                if (PayQuantity[v] > 1)
+                {
+                    var u = PayQuantity[v];
+                    PayQuantity[v] = u - 1;
+                }
+                else
+                {
+                    PayManaDic.Remove(v);//最後に追加したマナを取り消し
+                    PayQuantity.Remove(v);
+                }
+                PayOrder.RemoveAt(PayOrder.Count - 1);
+                ClickMode = false;
+            }
         }
     }
     public void Cancel()//マナの支払いをキャンセル
@@ -516,25 +543,39 @@ public class GameManager : MonoBehaviourPunCallbacks
             ClickMode = false;
         }
     }
-    IEnumerator Col1(bool b,List<int> needL,int ap,string s)//大きなループ　支払い終わったら返す
+    IEnumerator Col1(bool b, List<int> needL, int ap, string s)//大きなループ　支払い終わったら返す
     {
-        while (PayManaDic.Count <= needL.Count)
+        while (PayOrder.Count < needL.Count)
         {
-            ColorSet(needL[PayManaDic.Count]);
+            ColorSet(needL[PayOrder.Count]);
             ClickMode = true;
             yield return new WaitWhile(() => ClickMode);
         }
-        if (needL.Count >= PayManaDic.Count)
+        if (needL.Count == PayOrder.Count)
         {
             MoveCard(ap, s);
+            GameObject card = GameObject.Find(s);
+            card.transform.SetParent(FieldList[ap]);
             if (b)//テンポラリーマナリストを適用
             {
                 ManaDic = TempDic;
+                foreach (var m in ManaDic)
+                {
+                    m.Value.view.Show(m.Value.model);
+                }
             }
             else
             {
                 noManaDic = TempDic;
+                foreach (var n in noManaDic)
+                {
+                    n.Value.view.Show(n.Value.model);
+                }
             }
+            scroll.SetActive(false);
+        }
+        else//キャンセルされた場合      
+        {
             scroll.SetActive(false);
         }
         yield break;
