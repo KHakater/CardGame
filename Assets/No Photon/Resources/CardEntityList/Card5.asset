@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 5
   name: 5
   manaList: 01000000
-  power: 1
+  power: 3
   Defence: 1
   icon: {fileID: 0}
   effectlist: []

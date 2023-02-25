@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Dictionary<int, Manacontroller> ManaDic, noManaDic, TempDic, PayManaDic = new Dictionary<int, Manacontroller>();
     public Dictionary<int, int> PayQuantity = new Dictionary<int, int>();
     public List<int> PayOrder = new List<int>();
-    bool isMasterTurn = true;
-    public bool isMyTurn = true;
+    bool isMasterTurn;
+    public bool isMyTurn;
     List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
     List<int> deck2 = new List<int>() { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
     public static GameManager instance;
@@ -42,30 +42,38 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject content;
     public bool ClickMode = false;
     public bool ifFinish;
+    public GameObject test1;
+    public GameObject test2;
+    public GameObject test3;
     public void Awake()
     {
         HandNameNum = 0;
         PhotonNetwork.IsMessageQueueRunning = true;
-        if (instance == null)
+        if (instance == null)//GameManager.instanceで利用できるように！！
         {
             instance = this;
         }
         GameObject akst = GameObject.Find("MMV");
         scroll.SetActive(false);
+        if (akst != null)
+        {
+            test1.SetActive(true);
+        }
         if (akst.GetComponent<MatchmakingView>().gameRuleProp["FS"] is int value)
         {
+            test2.SetActive(true);
             int FS1 = (int)akst.GetComponent<MatchmakingView>().gameRuleProp["FS"];
             if (FS1 == 1)
             {
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 {
-                    Debug.Log("あなたは先行です-1");
+                    Debug.Log("あなたは先行です-master");
                     isMyTurn = true;
                     isMasterTurn = true;
                 }
                 else
                 {
-                    Debug.Log("あなたは後行です-1");
+                    Debug.Log("あなたは後行です-master");
                     isMyTurn = false;
                     isMasterTurn = true;
                 }
@@ -74,17 +82,20 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 {
-                    Debug.Log("あなたは後行です-2");
+                    Debug.Log("あなたは後行です-no");
                     isMyTurn = false;
                     isMasterTurn = false;
                 }
                 else
                 {
-                    Debug.Log("あなたは先行です-2");
+                    Debug.Log("あなたは先行です-no");
                     isMyTurn = true;
                     isMasterTurn = false;
                 }
             }
+        }
+        else{
+            test3.SetActive(true);
         }
         NoDeck = GameObject.Find("MMV").GetComponent<MatchmakingView>().MMVNoDeck;
         MasDeck = GameObject.Find("MMV").GetComponent<MatchmakingView>().MMVMasDeck;
@@ -183,43 +194,31 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (isMasterTurn)
         {
-            PlayerTurn();
+            MasterTurn();
         }
         else
         {
-            EnemyTurn();
+            NoMasterTurn();
         }
     }
     public void ChangeTurn() // ターンエンドボタンにつける処理
     {
+        if (isMyTurn)
+        {
+            photonView.RPC(nameof(PunChangeTurn), RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void PunChangeTurn()
+    {
         isMasterTurn = !isMasterTurn; // ターンを逆にする
-        TurnCalc(); // ターンを相手に回す
         isMyTurn = !isMyTurn;
+        TurnCalc(); // ターンを相手に回す
+        Debug.Log("a");
     }
-    void PlayerTurn()//Masterに関係なく自分のターン
+    void MasterTurn()//Masterのターン
     {
-        Debug.Log("Playerのターン");
-        if (isMasterTurn)
-        {
-            //DrawCard("MH"); // 手札を一枚加える
-        }
-        else
-        {
-            //DrawCard("NH"); // 手札を一枚加える
-        }
-        for (int i = 0; i < 5; i++)
-        {
-            if (FieldList[i].transform.childCount != 0)
-            {
-                FieldList[i].GetChild(0).GetComponent<CardController>().model.canAttack = true;
-                FieldList[i].GetChild(0).GetComponent<CardController>().view.SetCanAttackPanel(true);
-            }
-        }
-    }
-    void EnemyTurn()//Masterに関係なく相手のターン
-    {
-        Debug.Log("Enemyのターン");
-        if (isMasterTurn)
+        if (ImMorN)
         {
             DrawCard("MH"); // 手札を一枚加える
         }
@@ -227,16 +226,39 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             DrawCard("NH"); // 手札を一枚加える
         }
-        // CardController[] enemyFieldCardList = FieldList[0].GetComponentsInChildren<CardController>();
-        // for (int i = 10; i < 15; i++)
-        // {
-        //     if (FieldList[i].transform.childCount == 0)
-        //     {
-        //         //CreateCard(1, i, "EF");
-        //         break;
-        //     }
-        // }
-        //ChangeTurn(); // ターンエンドする
+        if (isMyTurn)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (FieldList[i].transform.childCount != 0)
+                {
+                    FieldList[i].GetChild(0).GetComponent<CardController>().model.canAttack = true;
+                    FieldList[i].GetChild(0).GetComponent<CardController>().view.SetCanAttackPanel(true);
+                }
+            }
+        }
+    }
+    void NoMasterTurn()//Masterに関係なく相手のターン
+    {
+        if (ImMorN)
+        {
+            DrawCard("NH"); // 手札を一枚加える
+        }
+        else
+        {
+            DrawCard("MH"); // 手札を一枚加える
+        }
+        if (isMyTurn)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (FieldList[i].transform.childCount != 0)
+                {
+                    FieldList[i].GetChild(0).GetComponent<CardController>().model.canAttack = true;
+                    FieldList[i].GetChild(0).GetComponent<CardController>().view.SetCanAttackPanel(true);
+                }
+            }
+        }
     }
     public void CardBattle(CardController attackCard, CardController defenceCard)
     {
@@ -245,22 +267,47 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             return;
         }
-        if (attackCard.model.PlayerCard == defenceCard.model.PlayerCard)
+        if (attackCard.model.MastersCard == defenceCard.model.MastersCard)//攻撃カードと防御カードのコントローラーが同じ場合処理終了
         {
             return;
         }
-        attackCard.model.Defence -= defenceCard.model.power;
-        defenceCard.model.Defence -= attackCard.model.power;
-        if (attackCard.model.Defence <= 0)
+        photonView.RPC(nameof(PunBattle), RpcTarget.All, attackCard, defenceCard);
+    }
+    [PunRPC]
+    public void PunBattle(CardController ac, CardController dc)
+    {//Select,Damage,Endの順に実行
+        Select(ac, dc);
+    }
+    public void Select(CardController ac, CardController dc)
+    {
+        Damage(ac, dc);
+    }
+    public void Damage(CardController ac, CardController dc)
+    {
+        //返り値のある関数を実行、与えるダメージを算出した後、そのダメージを与える
+        int AsD = ac.model.Defence;
+        int DsD = dc.model.Defence;
+        int Adam = ac.model.power;
+        int Ddam = dc.model.power;
+        AsD -= Ddam;
+        DsD -= Adam;
+        ac.StatusChange(Adam, AsD);
+        dc.StatusChange(Adam, AsD);
+    }
+    public void end(CardController ac, CardController dc)
+    {
+        //死んでも発生する処理
+        if (ac.model.Defence <= 0)
         {
-            defenceCard.DestroyCard(attackCard);
+            ac.DestroyCard(ac);
         }
-        if (defenceCard.model.Defence <= 0)
+        if (dc.model.Defence <= 0)
         {
-            defenceCard.DestroyCard(defenceCard);
+            dc.DestroyCard(dc);
         }
-        attackCard.model.canAttack = false;
-
+        ac.frame(false, ac.model.MSelectable);
+        dc.frame(false, dc.model.MSelectable);
+        //死んだら発生しない処理？
     }
     public void AttackToLeader(CardController attackCard, bool isPlayerCard)
     {
@@ -314,10 +361,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (Input.GetKeyDown(KeyCode.A))
         {
             photonView.RPC(nameof(ManaCreate), RpcTarget.All, 9000, 1, true);
+            photonView.RPC(nameof(ManaCreate), RpcTarget.All, 9000, 1, false);
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
             photonView.RPC(nameof(ManaCreate), RpcTarget.All, 1000, 1, true);
+            photonView.RPC(nameof(ManaCreate), RpcTarget.All, 1000, 1, false);
         }
     }
     [PunRPC]
@@ -331,12 +380,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, true, 20);//trueなら自分のカード
+                card.Init(cardID, true, 20);//trueならマスターのカード
                 card.transform.SetParent(playerHand);
             }
             else
             {
-                card.Init(cardID, false, 21);
+                card.Init(cardID, true, 21);//falseなら非のカード
                 card.transform.SetParent(enemyHand);
             }
 
@@ -345,12 +394,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, false, 21);//trueなら自分のカード
+                card.Init(cardID, false, 21);///falseなら非のカード
                 card.transform.SetParent(enemyHand);
             }
             else
             {
-                card.Init(cardID, true, 20);
+                card.Init(cardID, false, 20);
                 card.transform.SetParent(playerHand);
             }
         }
@@ -363,7 +412,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                card.Init(cardID, false, 14 - NumI);
+                card.Init(cardID, true, 14 - NumI);
                 card.transform.SetParent(FieldList[14 - NumI]);
             }
 
@@ -378,7 +427,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                card.Init(cardID, true, NumI);
+                card.Init(cardID, false, NumI);
                 card.transform.SetParent(FieldList[NumI]);
             }
         }
@@ -459,20 +508,27 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void Activation(bool morn, List<int> NeedMana, int afterP, string PPname)//カードの発動に対して呼ばれる
     {
-        if (morn)//テンポラリーマナリストを作成
+        if (morn == ImMorN && isMyTurn)//自分のターンかつ自分のカード
         {
-            TempDic = ManaDic;
+            if (morn)//テンポラリーマナリストを作成
+            {
+                TempDic = ManaDic;
+            }
+            else
+            {
+                TempDic = noManaDic;
+            }
+            PayManaDic.Clear();
+            PayQuantity.Clear();
+            PayOrder.Clear();
+            ifFinish = false;
+            scroll.SetActive(true);
+            StartCoroutine(Col1(morn, NeedMana, afterP, PPname));
         }
         else
         {
-            TempDic = noManaDic;
+            Debug.Log(morn.ToString() + ImMorN.ToString() + isMyTurn.ToString());
         }
-        PayManaDic.Clear();
-        PayQuantity.Clear();
-        PayOrder.Clear();
-        ifFinish = false;
-        scroll.SetActive(true);
-        StartCoroutine(Col1(morn, NeedMana, afterP, PPname));
     }
     public void ColorSet(int colornum)//1とか9とか色が代入される
     {
@@ -556,6 +612,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             MoveCard(ap, s);
             GameObject card = GameObject.Find(s);
             card.transform.SetParent(FieldList[ap]);
+            card.GetComponent<CardController>().model.CardPlace = ap;
             if (b)//テンポラリーマナリストを適用
             {
                 ManaDic = TempDic;

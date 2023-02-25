@@ -49,7 +49,7 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
                 {
                     if (gameObject.GetComponent<CardController>().model.MSelectable == true)
                     {
-                        gameObject.GetComponent<CardController>().model.MSelectable = false;
+                        gameObject.GetComponent<CardController>().model.MSelectable = false;//良くない
                         GM.MirrorWhatSelect(this.gameObject);
                     }
                 }

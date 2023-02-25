@@ -46,6 +46,8 @@ MonoBehaviour:
   - PlDeckCustom
   - PunMoveCard
   - ManaCreate
+  - PunChangeTurn
+  - PunBattle
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -31,11 +31,15 @@ public class DropPlace : MonoBehaviour, IDropHandler
                 CardMovement card = eventData.pointerDrag.GetComponent<CardMovement>(); // ドラッグしてきた情報からCardMovementを取得
                 if (card != null) // もしカードがあれば、
                 {
-                    if (GM.FieldList[Num].transform.childCount == 0)
+                    var v = card.GetComponent<CardController>().model;
+                    if (20 <= v.CardPlace && v.CardPlace <= 22)//フィールドからは動かせない
                     {
-                        //card.cardParent = this.transform; // カードの親要素を自分（アタッチされてるオブジェクト）にする
-                        GM.Activation(card.GetComponent<CardController>().model.PlayerCard,card.GetComponent<CardController>().model.Mlist,Num,card.name);
-                        //card.GetComponent<CardController>().model.CardPlace = Num;
+                        if (GM.FieldList[Num].transform.childCount == 0)
+                        {
+                            //card.cardParent = this.transform; // カードの親要素を自分（アタッチされてるオブジェクト）にする
+                            GM.Activation(v.MastersCard, v.Mlist, Num, card.name);
+                            //card.GetComponent<CardController>().model.CardPlace = Num;
+                        }
                     }
                 }
             }
@@ -58,7 +62,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
         {
             MirrorPorE = "E";
         }
-        GM.photonView.RPC("CreateCard", RpcTarget.All, MirrorObj.GetComponent<CardController>().ID,a,MirrorPorE);
+        GM.photonView.RPC("CreateCard", RpcTarget.All, MirrorObj.GetComponent<CardController>().ID, a, MirrorPorE);
         Destroy(Mirror);
     }
 }

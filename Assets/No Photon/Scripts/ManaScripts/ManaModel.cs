@@ -9,7 +9,7 @@ public class ManaModel : MonoBehaviour
     public int maxmana;
     public int nowmana;
     public Sprite icon;
-    public bool PlayerCard = false;
+    public bool MastersCard = false;
     public List<int> color;
     public ManaModel(int cardID, bool playerCard,int max,int useful) // データを受け取り、その処理
     {
@@ -19,7 +19,7 @@ public class ManaModel : MonoBehaviour
         maxmana = max;
         nowmana = useful;
         icon = me.ImageMana;
-        PlayerCard = playerCard;
+        MastersCard = playerCard;
         color = me.ManaColor;
     }
 }

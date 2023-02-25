@@ -12,7 +12,7 @@ public class CardModel
     public Sprite icon;
     public bool canAttack = false;
 
-    public bool PlayerCard = false;
+    public bool MastersCard = false;
     public string CTM;
     public bool MSelectable = false;
     public int CardPlace;
@@ -26,7 +26,7 @@ public class CardModel
         Defence = cardEntity.Defence;
         icon = cardEntity.icon;
         MSelectable = false;
-        PlayerCard = playerCard;
+        MastersCard = playerCard;
         CTM = cardEntity.CT.ToString();
         CardPlace = CP;
     }

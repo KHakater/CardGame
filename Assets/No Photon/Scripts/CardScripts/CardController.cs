@@ -21,4 +21,16 @@ public class CardController : MonoBehaviour
     {
         Destroy(card.gameObject);
     }
+    public void StatusChange(int attack,int hp)//攻撃と体力を指定された値に変更し、表示する
+    {
+        model.power = attack;
+        model.Defence = hp;
+        view.Show(model);
+    }
+    public void frame(bool canATK,bool canSelect){
+        model.canAttack = canATK;
+        model.MSelectable = canSelect;
+        view.SetCanAttackPanel(canATK);
+        view.SetcanSelectPanel(canSelect);
+    }
 }
