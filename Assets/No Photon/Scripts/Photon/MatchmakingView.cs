@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class MatchmakingView : MonoBehaviourPunCallbacks
 {
-    public ExitGames.Client.Photon.Hashtable gameRuleProp = new ExitGames.Client.Photon.Hashtable();
+    public ExitGames.Client.Photon.Hashtable rndc = new ExitGames.Client.Photon.Hashtable();
 
     public ExitGames.Client.Photon.Hashtable MasdeckHashtable = new ExitGames.Client.Photon.Hashtable();
     public ExitGames.Client.Photon.Hashtable NoMasdeckHashtable = new ExitGames.Client.Photon.Hashtable();
@@ -104,7 +104,7 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("待機中");
-            List<int> HL = new List<int>{ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2 };
+            List<int> HL = new List<int> { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2 };
             int i = 0;
             for (i = 0; i < HL.Count; i++)
             {
@@ -163,18 +163,27 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
         }
         if (PhotonNetwork.IsMasterClient)
         {
-
             PhotonNetwork.CurrentRoom.IsOpen = false;
-            int rnd = Random.Range(1, 3);
-            gameRuleProp.Add("FS", rnd);
-            PhotonNetwork.CurrentRoom.SetCustomProperties(gameRuleProp);
-            //PhotonNetwork.AutomaticallySyncScene = true;
-            photonView.RPC(nameof(RoadBattleScene), RpcTarget.All);
+            StartCoroutine(wait1());
         }
+    }
+    IEnumerator wait1()
+    {
+        yield return StartCoroutine(wait2());
+        photonView.RPC(nameof(RoadBattleScene), RpcTarget.All);
+        yield return null;
+    }
+    IEnumerator wait2()
+    {
+        int rnd = Random.Range(1, 3);
+        rndc.Add("FS", rnd);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(rndc);
+        yield return null;
     }
     [PunRPC]
     public void RoadBattleScene()
     {
+        Debug.Log("hannnou");
         PhotonNetwork.IsMessageQueueRunning = false;
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
     }

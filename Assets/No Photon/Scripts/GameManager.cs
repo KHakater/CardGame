@@ -17,10 +17,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Dictionary<int, Manacontroller> ManaDic, noManaDic, TempDic, PayManaDic = new Dictionary<int, Manacontroller>();
     public Dictionary<int, int> PayQuantity = new Dictionary<int, int>();
     public List<int> PayOrder = new List<int>();
-    bool isMasterTurn;
+    public bool isMasterTurn;
     public bool isMyTurn;
-    List<int> deck = new List<int>() { 1, 2, 4, 1, 2, 4, 1, 2, 4, 1, 2, 4 };
-    List<int> deck2 = new List<int>() { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
     public static GameManager instance;
 
     public int playerLeaderHP;//変更予定
@@ -55,14 +53,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         GameObject akst = GameObject.Find("MMV");
         scroll.SetActive(false);
-        if (akst != null)
+        if (akst.GetComponent<MatchmakingView>() != null)
         {
             test1.SetActive(true);
         }
-        if (akst.GetComponent<MatchmakingView>().gameRuleProp["FS"] is int value)
+        if (akst.GetComponent<MatchmakingView>().rndc["FS"] is int value)
         {
             test2.SetActive(true);
-            int FS1 = (int)akst.GetComponent<MatchmakingView>().gameRuleProp["FS"];
+            int FS1 = (int)akst.GetComponent<MatchmakingView>().rndc["FS"];
             if (FS1 == 1)
             {
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -94,11 +92,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                 }
             }
         }
-        else{
+        else
+        {
             test3.SetActive(true);
         }
-        NoDeck = GameObject.Find("MMV").GetComponent<MatchmakingView>().MMVNoDeck;
-        MasDeck = GameObject.Find("MMV").GetComponent<MatchmakingView>().MMVMasDeck;
+        NoDeck = akst.GetComponent<MatchmakingView>().MMVNoDeck;
+        MasDeck = akst.GetComponent<MatchmakingView>().MMVMasDeck;
         if (PhotonNetwork.IsMasterClient)
         {
             ImMorN = true; //PEdeck.Add("Pldeck", HL.ConvertAll<object>(item => (object)item).ToArray());
@@ -155,7 +154,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 return;
             }
-            Debug.Log(Nohand.Count);
             if (Nohand.Count < 9)
             {
                 // デッキの一番上のカードを抜き取り、手札に加える
