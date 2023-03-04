@@ -16,7 +16,7 @@ MonoBehaviour:
   name: "\u8D642\u86792"
   manaList: 01000000010000000900000009000000
   power: 3
-  Defence: 1
+  Defence: 5
   icon: {fileID: 21300000, guid: a32eb60562a87cc41b5a9248cf83bf8b, type: 3}
   effectlist: []
   CT: 2

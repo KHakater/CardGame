@@ -11,26 +11,32 @@ public class CardController : MonoBehaviour
     {
         view = GetComponent<CardView>();
     }
-    public void Init(int cardID, bool playerCard ,int cardplace) // カードを生成した時に呼ばれる関数
+    public void Init(int cardID, bool playerCard, int cardplace) // カードを生成した時に呼ばれる関数
     {
-        model = new CardModel(cardID, playerCard,cardplace); // カードデータを生成
+        model = new CardModel(cardID, playerCard, cardplace); // カードデータを生成
         view.Show(model); // 表示
         ID = cardID;
     }
     public void DestroyCard(CardController card)
     {
+        GameManager.instance.ifDestroyed(this.gameObject.GetComponent<CardController>());
         Destroy(card.gameObject);
     }
-    public void StatusChange(int attack,int hp)//攻撃と体力を指定された値に変更し、表示する
+    public void StatusChange(int attack, int hp)//攻撃と体力を指定された値に変更し、表示する
     {
         model.power = attack;
         model.Defence = hp;
         view.Show(model);
     }
-    public void frame(bool canATK,bool canSelect){
+    public void frame(bool canATK, bool canSelect)
+    {
         model.canAttack = canATK;
         model.MSelectable = canSelect;
         view.SetCanAttackPanel(canATK);
         view.SetcanSelectPanel(canSelect);
+    }
+    public void Move(int pos)
+    {
+        model.CardPlace = pos;
     }
 }
