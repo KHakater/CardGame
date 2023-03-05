@@ -362,15 +362,13 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void MirrorSelect()
     {
-        GMSelectPhaze = true;
-        SelectableList.Clear();
         for (int i = 0; i < 5; i++)
         {
             if (FieldList[i].transform.childCount != 0)
             {
-                FieldList[i].GetChild(0).GetComponent<CardController>().model.MSelectable = true;
+                var v = FieldList[i].GetChild(0).GetComponent<CardController>();
                 SelectableList.Add(FieldList[i].GetChild(0).gameObject);
-                FieldList[i].GetChild(0).GetComponent<CardController>().view.SetcanSelectPanel(true);
+                v.frame(v.model.canAttack,true);
             }
         }
     }

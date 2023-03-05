@@ -47,9 +47,10 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
             {
                 if (photonView.IsMine)
                 {
-                    if (gameObject.GetComponent<CardController>().model.MSelectable == true)
+                    var v = gameObject.GetComponent<CardController>();
+                    if (v.model.MSelectable == true)
                     {
-                        gameObject.GetComponent<CardController>().model.MSelectable = false;//良くない
+                        v.frame(v.model.canAttack,false);
                         GM.MirrorWhatSelect(this.gameObject);
                     }
                 }

@@ -16,6 +16,8 @@ public class CardModel
     public string CTM;
     public bool MSelectable = false;
     public int CardPlace;
+   public int MirrorRange;
+    public int MirrorType;
     public CardModel(int cardID, bool playerCard, int CP) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);

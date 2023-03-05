@@ -49,6 +49,12 @@ public class DropPlace : MonoBehaviour, IDropHandler
     {
         GM.WhatDropPlace = this.gameObject;
         GM.MirrorSelect();
+        GameManager.GMSelectPhaze = true;
+        GM.SelectableList.Clear();
+        foreach (CardController cardController in GM.CardList)
+        {
+            
+        }
         SelectPhaze = true;
         yield return new WaitWhile(() => SelectPhaze); // flg がfalseになるまで処理が止まる
         Debug.Log(MirrorObj);
