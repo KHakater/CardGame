@@ -6,15 +6,9 @@ using Photon.Pun;
 public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public Transform cardParent;
-    GameManager GM;
-    void Start()
-    {
-        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
-    }
-
     public void OnBeginDrag(PointerEventData eventData) // ドラッグを始めるときに行う処理
     {
-        if (GM.isMyTurn)
+        if (GameManager.instance.isMyTurn)
         {
             cardParent = transform.parent;
             transform.SetParent(cardParent.parent, false);
@@ -24,7 +18,7 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
 
     public void OnDrag(PointerEventData eventData) // ドラッグした時に起こす処理
     {
-        if (GM.isMyTurn)
+        if (GameManager.instance.isMyTurn)
         {
             transform.position = eventData.position;
         }
@@ -32,29 +26,10 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
 
     public void OnEndDrag(PointerEventData eventData) // カードを離したときに行う処理
     {
-        if (GM.isMyTurn)
+        if (GameManager.instance.isMyTurn)
         {
             transform.SetParent(cardParent, false);
             GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
-        }
-    }
-
-    public void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (GM.isMyTurn)
-            {
-                if (photonView.IsMine)
-                {
-                    var v = gameObject.GetComponent<CardController>();
-                    if (v.model.MSelectable == true)
-                    {
-                        v.frame(v.model.canAttack,false);
-                        GM.MirrorWhatSelect(this.gameObject);
-                    }
-                }
-            }
         }
     }
 }

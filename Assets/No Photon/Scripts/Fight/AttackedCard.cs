@@ -7,7 +7,7 @@ public class AttackedCard : MonoBehaviour, IDropHandler
 {
     public void OnDrop(PointerEventData eventData)
     {
-        if (GameManager.GMSelectPhaze == false)
+        if (GameManager.instance.GMSelectPhaze == false)
         {
             /// 攻撃
             // attackerを選択　マウスポインターに重なったカードをアタッカーにする

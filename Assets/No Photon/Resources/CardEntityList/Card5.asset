@@ -13,10 +13,19 @@ MonoBehaviour:
   m_Name: Card5
   m_EditorClassIdentifier: 
   cardID: 5
-  name: 5
+  name: Mirror
   manaList: 01000000
   power: 3
   Defence: 1
-  icon: {fileID: 0}
-  effectlist: []
-  CT: 2
+  icon: {fileID: 21300000, guid: b3e79ce2fa2aac84bbd1ca11cfb6e4d3, type: 3}
+  CT: 0
+  MirrorRange: 1
+  MirrorType: 2147483647
+  ReverseName: thth5hrhrh
+  ReversemanaList: 
+  Reversepower: 2
+  ReverseDefence: 2
+  ReverseIcon: {fileID: 0}
+  ReverseCT: 2
+  ReverseMirrorRange: 0
+  ReverseMirrorType: 0

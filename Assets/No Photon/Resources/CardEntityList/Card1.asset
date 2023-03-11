@@ -17,6 +17,15 @@ MonoBehaviour:
   manaList: 01000000010000000900000009000000
   power: 3
   Defence: 5
-  icon: {fileID: 21300000, guid: a32eb60562a87cc41b5a9248cf83bf8b, type: 3}
-  effectlist: []
+  icon: {fileID: 21300000, guid: 6c53d61fddc86c14cb937166f6e791f3, type: 3}
   CT: 2
+  MirrorRange: 0
+  MirrorType: 0
+  ReverseName: aaaaaaaaaaaaaa
+  ReversemanaList: 
+  Reversepower: 5
+  ReverseDefence: 5
+  ReverseIcon: {fileID: 21300000, guid: ec1d5cc63c05bbd439b673eb0315db25, type: 3}
+  ReverseCT: 2
+  ReverseMirrorRange: 0
+  ReverseMirrorType: 0

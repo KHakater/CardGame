@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] CardController cardPrefab;
+    [SerializeField] CardController SelectCardPrefab;
     [SerializeField] Manacontroller ManaPrefab;
     [SerializeField] Manacontroller SelectManaPrefab;
     [SerializeField] Transform playerHand, enemyHand;
@@ -20,12 +21,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool isMasterTurn;
     public bool isMyTurn;
     public static GameManager instance;
-
     public int playerLeaderHP;//変更予定
     public int enemyLeaderHP;//変更予定
     public List<GameObject> SelectableList;
-    public GameObject WhatDropPlace;
-    public static bool GMSelectPhaze = false;
+    public bool GMSelectPhaze = false;
 
     public bool ImMorN;//自分がマスタークライアントならP、違うならEとして判定される
     public List<int> MasDeck = new List<int>() { };
@@ -35,26 +34,33 @@ public class GameManager : MonoBehaviourPunCallbacks
     public List<GameObject> MasObjhand = new List<GameObject>() { };
     public List<GameObject> NoObjhand = new List<GameObject>() { };
     public List<CardController> CardList = new List<CardController>();
+    public List<CardController> AllCardList = new List<CardController>();
     public int HandNameNum = 0;
 
-    public GameObject scroll;
-    public GameObject content;
+    public GameObject scroll, scroll2;
+    public GameObject content, content2;
     public bool ClickMode = false;
     public bool ifFinish;
     public GameObject test1;
     public GameObject test2;
     public GameObject test3;
+    public bool ActChecker;
+    public bool actReturn;
+    public GameObject MirrorSelectedObj;
+    public int GMSelectNum;
+    public bool SelectSuccess;
     public void Awake()
     {
-        HandNameNum = 0;
         PhotonNetwork.IsMessageQueueRunning = true;
+        HandNameNum = 0;
+        GMSelectPhaze = false;
         if (instance == null)//GameManager.instanceで利用できるように！！
         {
             instance = this;
         }
-        //GameObject akst = GameObject.Find("MMV");  これだとマスターでないほうは乱数発生をしていないため取得できない
         var akst = MatchmakingView.instance;
         scroll.SetActive(false);
+        scroll2.SetActive(false);
         if (akst != null)
         {
             test1.SetActive(true);
@@ -274,7 +280,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
         photonView.RPC(nameof(PunBattle), RpcTarget.All, attackCard.model.CardPlace, defenceCard.model.CardPlace);
-
+        Debug.Log("a");
     }
     [PunRPC]
     public void PunBattle(int ac, int dc)
@@ -337,6 +343,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (attackCard.model.canAttack == false)
         {
+            Debug.Log("CantBattle");
             return;
         }
         enemyLeaderHP -= attackCard.model.power;
@@ -358,25 +365,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         playerLeaderHPText.text = "HP:" + playerLeaderHP.ToString();
         enemyLeaderHPText.text = "HP:" + enemyLeaderHP.ToString();
-    }
-
-    public void MirrorSelect()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            if (FieldList[i].transform.childCount != 0)
-            {
-                var v = FieldList[i].GetChild(0).GetComponent<CardController>();
-                SelectableList.Add(FieldList[i].GetChild(0).gameObject);
-                v.frame(v.model.canAttack,true);
-            }
-        }
-    }
-    public void MirrorWhatSelect(GameObject SelectedObj)
-    {
-        WhatDropPlace.GetComponent<DropPlace>().MirrorObj = SelectedObj;
-        WhatDropPlace.GetComponent<DropPlace>().SelectPhaze = false;
-        GMSelectPhaze = false;
     }
     void Update()
     {
@@ -402,12 +390,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, true, 20);//trueならマスターのカード
+                card.Init(cardID, true, 20, true);//trueならマスターのカード
                 card.transform.SetParent(playerHand);
             }
             else
             {
-                card.Init(cardID, true, 20);//falseなら非のカード
+                card.Init(cardID, true, 20, true);//falseなら非のカード
                 card.transform.SetParent(enemyHand);
             }
 
@@ -416,13 +404,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, false, 21);///falseなら非のカード
+                card.Init(cardID, false, 21, true);///falseなら非のカード
                 card.transform.SetParent(enemyHand);
 
             }
             else
             {
-                card.Init(cardID, false, 21);//数値はMaster側なら必ず20、違うなら必ず21
+                card.Init(cardID, false, 21, true);//数値はMaster側なら必ず20、違うなら必ず21
                 card.transform.SetParent(playerHand);
             }
         }
@@ -430,12 +418,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, true, NumI);
+                card.Init(cardID, true, NumI, true);
                 card.transform.SetParent(FieldList[NumI]);
             }
             else
             {
-                card.Init(cardID, true, NumI);
+                card.Init(cardID, true, NumI, true);
                 card.transform.SetParent(FieldList[14 - NumI]);
             }
 
@@ -444,17 +432,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, false, NumI);
+                card.Init(cardID, false, NumI, true);
                 card.transform.SetParent(FieldList[14 - NumI]);
 
             }
             else
             {
-                card.Init(cardID, false, NumI);
+                card.Init(cardID, false, NumI, true);
                 card.transform.SetParent(FieldList[NumI]);
             }
         }
         CardList.Add(card);
+        AllCardList.Add(card);
     }
 
     public void MoveCard(int afterP, string PPname)
@@ -538,7 +527,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Activation(bool morn, List<int> NeedMana, int afterP, string PPname)//カードの発動に対して呼ばれる
+    public void Activation(bool morn, List<int> NeedMana)//カードの発動に対して呼ばれる
     {
         if (morn == ImMorN && isMyTurn)//自分のターンかつ自分のカード
         {
@@ -555,19 +544,50 @@ public class GameManager : MonoBehaviourPunCallbacks
             PayOrder.Clear();
             ifFinish = false;
             scroll.SetActive(true);
-            if (ImMorN)
+            IEnumerator corutine = Col1(morn, NeedMana);
+            StartCoroutine(corutine);
+        }
+    }
+    IEnumerator Col1(bool b, List<int> needL)//大きなループ　支払い終わったら返す 受け取るAPは絶対的位置に調整済み
+    {
+        while (PayOrder.Count < needL.Count)
+        {
+            ColorSet(needL[PayOrder.Count]);
+            ClickMode = true;
+            yield return new WaitWhile(() => ClickMode);
+        }
+        if (needL.Count == PayOrder.Count)
+        {
+            if (b)//テンポラリーマナリストを適用
             {
-                StartCoroutine(Col1(morn, NeedMana, afterP, PPname));
+                ManaDic = TempDic;
+                foreach (var m in ManaDic)
+                {
+                    m.Value.view.Show(m.Value.model);
+                }
             }
             else
             {
-                StartCoroutine(Col1(morn, NeedMana, afterP, PPname));//DropPlaceからもらった数値は端末によって異なるので調節
+                noManaDic = TempDic;
+                foreach (var n in noManaDic)
+                {
+                    n.Value.view.Show(n.Value.model);
+                }
             }
+            scroll.SetActive(false);
+            ActChecker = true;
+            actReturn = true;
+            yield return null;
         }
-        else
+        else//キャンセルされた場合   共通  
         {
-            Debug.Log(morn.ToString() + ImMorN.ToString() + isMyTurn.ToString());
+            Debug.Log("a");
+            scroll.SetActive(false);
+            ActChecker = true;
+            actReturn = false;
+            yield return null;
         }
+        //yield return new WaitUntil(() => PayManaDic.Count >= i);
     }
     public void ColorSet(int colornum)//1とか9とか色が代入される
     {
@@ -637,54 +657,148 @@ public class GameManager : MonoBehaviourPunCallbacks
             ClickMode = false;
         }
     }
-    IEnumerator Col1(bool b, List<int> needL, int ap, string s)//大きなループ　支払い終わったら返す 受け取るAPは絶対的位置に調整済み
+    public void MonsterSummon(List<int> needL, int ap, string s)
     {
-        while (PayOrder.Count < needL.Count)
+        GameObject card = GameObject.Find(s);
+        card.transform.SetParent(FieldList[ap]);
+        if (ImMorN)
         {
-            ColorSet(needL[PayOrder.Count]);
-            ClickMode = true;
-            yield return new WaitWhile(() => ClickMode);
+            card.GetComponent<CardController>().Move(ap);
         }
-        if (needL.Count == PayOrder.Count)
+        else
         {
-            MoveCard(ap, s);
-            GameObject card = GameObject.Find(s);
-            card.transform.SetParent(FieldList[ap]);
-            if (ImMorN)
-            {
-                card.GetComponent<CardController>().Move(ap);
-            }
-            else
-            {
-                card.GetComponent<CardController>().Move(14 - ap);
-            }
-            if (b)//テンポラリーマナリストを適用
-            {
-                ManaDic = TempDic;
-                foreach (var m in ManaDic)
-                {
-                    m.Value.view.Show(m.Value.model);
-                }
-            }
-            else
-            {
-                noManaDic = TempDic;
-                foreach (var n in noManaDic)
-                {
-                    n.Value.view.Show(n.Value.model);
-                }
-            }
-            scroll.SetActive(false);
+            card.GetComponent<CardController>().Move(14 - ap);
         }
-        else//キャンセルされた場合      
-        {
-            scroll.SetActive(false);
-        }
-        yield break;
-        //yield return new WaitUntil(() => PayManaDic.Count >= i);
+        MoveCard(ap, s);
     }
     public void ifDestroyed(CardController c)
     {
         CardList.Remove(c);
+    }
+    public void dup()
+    {
+        StartCoroutine("Duplicate");
+    }
+    public void rev()
+    {
+        StartCoroutine("Reverse");
+    }
+    public IEnumerator Duplicate()
+    {
+        if (isMyTurn && GMSelectPhaze == false)
+        {
+            SelectableList.Clear();
+            foreach (CardController c in AllCardList)
+            {
+                SelectableList.Add(c.gameObject);
+                c.frame(c.model.canAttack, true);
+            }
+            yield return StartCoroutine("CardListSet");
+            GMSelectPhaze = true;
+            yield return new WaitWhile(() => GMSelectPhaze); // flg がfalseになったら再開
+            if (ImMorN)
+            {
+                photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
+                , 20, "MH", "name");
+            }
+            else
+            {
+                photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
+                , 21, "NH", "name");
+            }
+            foreach (GameObject p in SelectableList)
+            {
+                var vv = p.GetComponent<CardController>();
+                vv.frame(vv.model.canAttack, false);
+            }
+            scroll2.SetActive(false);
+        }
+        yield return null;
+    }
+    public IEnumerator Reverse()
+    {
+        if (isMyTurn && GMSelectPhaze == false)
+        {
+            GMSelectPhaze = true;
+            yield return StartCoroutine("ReverseCheck");
+            yield return StartCoroutine("CardListSet");
+            yield return new WaitWhile(() => GMSelectPhaze);
+            if (SelectSuccess)
+            {
+                foreach (CardController c in AllCardList)
+                {
+                    if (c.IndividualNumber == GMSelectNum)
+                    {
+                        MirrorSelectedObj = c.gameObject;
+                    }
+                }
+                var v = MirrorSelectedObj.GetComponent<CardController>();
+                v.Init(v.model.CardID, v.model.MastersCard, v.model.CardPlace, !v.model.IsFace);
+            }
+            foreach (GameObject p in SelectableList)
+            {
+                var vv = p.GetComponent<CardController>();
+                vv.frame(vv.model.canAttack, false);
+            }
+            scroll2.SetActive(false);
+        }
+        yield return null;
+    }
+    IEnumerator ReverseCheck()
+    {
+        SelectableList.Clear();
+        foreach (CardController c in AllCardList)
+        {
+            if (!(c.model.MastersCard == ImMorN))
+            {
+                continue;
+            }
+            if (c.model.CardPlace != 20)
+            {
+                if (c.model.CardPlace < 5)
+                {
+                    if (c.model.ReverseCTM == "Mirror" || c.model.ReverseCTM == "Magic")//自分フィールドで反転後鏡か魔法になるものはダメ
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            if (c.gameObject != null)
+            {
+                SelectableList.Add(c.gameObject);
+                c.frame(c.model.canAttack, true);
+            }
+        }
+        yield return null;
+    }
+    public IEnumerator CardListSet()
+    {
+        scroll2.SetActive(true);
+        foreach (Transform child in content.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        int i = 9;
+        foreach (GameObject obj in SelectableList)//一時的マナリストの中から
+        {
+            CardController sc = Instantiate(SelectCardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            sc.transform.SetParent(content2.transform);// int cardID, bool playerCard, int cardplace,bool isfase
+            var v = obj.GetComponent<CardController>();
+            sc.Init(v.model.CardID, true, 100, v.model.IsFace);
+            v.IndividualNumber = i;
+            sc.IndividualNumber = i;
+            i += 1;
+        }
+        yield return null;
+    }
+    public void CardSelectCansel()
+    {
+        scroll2.SetActive(false);
+        GMSelectPhaze = false;
+        SelectSuccess = false;
     }
 }

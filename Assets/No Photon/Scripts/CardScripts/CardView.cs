@@ -12,11 +12,22 @@ public class CardView : MonoBehaviourPunCallbacks
     [SerializeField] GameObject canSelectPanel;
     public void Show(CardModel cardModel) // cardModelのデータ取得と反映
     {
-        nameText.text = cardModel.name;
-        powerText.text = "ATK:" + cardModel.power.ToString();
-        defenseText.text = "DEF:" + cardModel.Defence.ToString();
-        //costText.text = cardModel.cost.ToString();
-        iconImage.sprite = cardModel.icon;
+        if (cardModel.IsFace)
+        {
+            nameText.text = cardModel.name;
+            powerText.text = "ATK:" + cardModel.power.ToString();
+            defenseText.text = "DEF:" + cardModel.Defence.ToString();
+            //costText.text = cardModel.cost.ToString();
+            iconImage.sprite = cardModel.icon;
+        }
+        else
+        {
+            nameText.text = cardModel.Reversename;
+            powerText.text = "ATK:" + cardModel.Reversepower.ToString();
+            defenseText.text = "DEF:" + cardModel.ReverseDefence.ToString();
+            //costText.text = cardModel.cost.ToString();
+            iconImage.sprite = cardModel.Reverseicon;
+        }
     }
     public void SetCanAttackPanel(bool flag)
     {

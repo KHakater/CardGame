@@ -18,5 +18,14 @@ MonoBehaviour:
   power: 31
   Defence: 0
   icon: {fileID: 21300000, guid: ed68e8f1c1e846542a14b2075f3caaf4, type: 3}
-  effectlist: []
   CT: 2
+  MirrorRange: 0
+  MirrorType: 0
+  ReverseName: nnnnnnnn
+  ReversemanaList: 
+  Reversepower: 5
+  ReverseDefence: 5
+  ReverseIcon: {fileID: 0}
+  ReverseCT: 2
+  ReverseMirrorRange: 0
+  ReverseMirrorType: 0

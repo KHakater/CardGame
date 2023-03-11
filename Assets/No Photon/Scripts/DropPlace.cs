@@ -10,8 +10,6 @@ public class DropPlace : MonoBehaviour, IDropHandler
 {
     public GameManager GM;
     public int Num;
-    public bool SelectPhaze;
-    public GameObject MirrorObj;
     public GameObject Mirror;
     public void Awake()
     {
@@ -19,12 +17,12 @@ public class DropPlace : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData) // ドロップされた時に行う処理
     {
-        if (SelectPhaze == false)
+        if (GM.GMSelectPhaze == false)
         {
             if (eventData.pointerDrag.GetComponent<CardController>().model.CTM == "Mirror")
             {
                 Mirror = eventData.pointerDrag;
-                StartCoroutine("MirrorWait", Num);
+                StartCoroutine("MirrorWait");
             }
             else
             {
@@ -36,39 +34,67 @@ public class DropPlace : MonoBehaviour, IDropHandler
                     {
                         if (GM.FieldList[Num].transform.childCount == 0)
                         {
-                            //card.cardParent = this.transform; // カードの親要素を自分（アタッチされてるオブジェクト）にする
-                            GM.Activation(v.MastersCard, v.Mlist, Num, card.name);
-                            //card.GetComponent<CardController>().model.CardPlace = Num;
+                            StartCoroutine("col", card);
                         }
                     }
                 }
             }
         }
     }
-    IEnumerator MirrorWait(int a)
+    IEnumerator col(CardMovement c)
     {
-        GM.WhatDropPlace = this.gameObject;
-        GM.MirrorSelect();
-        GameManager.GMSelectPhaze = true;
-        GM.SelectableList.Clear();
-        foreach (CardController cardController in GM.CardList)
+        GM.ActChecker = false;
+        GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.Mlist);
+        yield return new WaitUntil(() => GM.ActChecker);
+        if (GM.actReturn)
         {
-            
+            GM.MonsterSummon(c.GetComponent<CardController>().model.Mlist, Num, c.gameObject.name);
         }
-        SelectPhaze = true;
-        yield return new WaitWhile(() => SelectPhaze); // flg がfalseになるまで処理が止まる
-        Debug.Log(MirrorObj);
-        Debug.Log(MirrorObj.GetComponent<CardController>().ID);
-        string MirrorPorE = "P";
-        if (a < 5)
+        else
         {
-            MirrorPorE = "P";
+            Debug.Log("CantSummon");
         }
-        if (a > 9)
+        yield return null;
+    }
+    IEnumerator MirrorWait()
+    {
+        var a = Mirror.GetComponent<CardController>();
+        GM.Activation(a.model.MastersCard, a.model.Mlist);
+        yield return new WaitUntil(() => GM.ActChecker);//マナの支払いを待機
+        if (GM.actReturn)
         {
-            MirrorPorE = "E";
+            yield return Mirror.GetComponent<CardController>().StartCoroutine("Mirrorcheck");
+            GM.GMSelectPhaze = true;
+            GM.SelectableList.Clear();
+            yield return new WaitWhile(() => GM.GMSelectPhaze); // flg がfalseになったら再開
+            Debug.Log("finish");
+            // string MirrorPorE = "MF";
+            // if (a.model.CardPlace < 5)
+            // {
+            //     MirrorPorE = "MF";
+            // }
+            // if (a.model.CardPlace > 9)
+            // {
+            //     MirrorPorE = "NF";
+            // }
+            if (GM.ImMorN)
+            {
+                GM.photonView.RPC("CreateCard", RpcTarget.All, GM.MirrorSelectedObj.GetComponent<CardController>().ID
+                , Num, "MF", "name");
+            }
+            else
+            {
+                GM.photonView.RPC("CreateCard", RpcTarget.All, GM.MirrorSelectedObj.GetComponent<CardController>().ID
+                , Num, "NF", "name");
+            }
+            Destroy(Mirror);
         }
-        GM.photonView.RPC("CreateCard", RpcTarget.All, MirrorObj.GetComponent<CardController>().ID, a, MirrorPorE);
-        Destroy(Mirror);
+        foreach (GameObject c in GameManager.instance.SelectableList)
+        {
+            var v = c.GetComponent<CardController>();
+            v.frame(v.model.canAttack, false);
+        }
+        GameManager.instance.SelectableList.Clear();
+        yield return null;
     }
 }
