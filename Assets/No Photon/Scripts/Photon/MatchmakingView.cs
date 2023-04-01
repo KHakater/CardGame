@@ -24,7 +24,9 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
     public List<int> MMVMasDeck = new List<int>() { };
     public List<int> MMVNoDeck = new List<int>() { };
     public int rnd = 0;
-    public List<int> MyDeck = new List<int>() { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2 };
+    public List<int> MyDeck = new List<int> { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2 };
+    public List<int> MasDeck;
+    public List<int> NoDeck;
     public int CustomCheck1;
     public bool CustomCheck2;
     public int Cus2DeckListCounter;
@@ -98,9 +100,9 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
         {
             CustomCheck2 = false;
             int i = 0;
-            for (i = 0; i < MyDeck.Count; i++)
+            for (i = 0; i < NoDeck.Count; i++)
             {
-                deckHashtable["NoDeck" + i] = MyDeck[i];
+                deckHashtable["NoDeck" + i] = NoDeck[i];
             }
             deckHashtable["NoDeckNum"] = i;
             PhotonNetwork.CurrentRoom.SetCustomProperties(deckHashtable);
@@ -112,9 +114,9 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
         {
             Debug.Log("待機中");
             int i = 0;
-            for (i = 0; i < MyDeck.Count; i++)
+            for (i = 0; i < MasDeck.Count; i++)
             {
-                deckHashtable["PlDeck" + i] = MyDeck[i];
+                deckHashtable["PlDeck" + i] = MasDeck[i];
             }
             deckHashtable["PlDeckNum"] = i;
             PhotonNetwork.CurrentRoom.SetCustomProperties(deckHashtable);
@@ -128,9 +130,9 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
     [PunRPC]
     public IEnumerator StartGame()
     {
-        Cus2DeckListCounter=0;
-        Custom2DeckList("No",MMVNoDeck);
-        Custom2DeckList("Pl",MMVMasDeck);
+        Cus2DeckListCounter = 0;
+        Custom2DeckList("No", MMVNoDeck);
+        Custom2DeckList("Pl", MMVMasDeck);
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
@@ -138,7 +140,7 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
             CustomCheck1 = 0;
             rndc.Add("FS", rnd);
             PhotonNetwork.CurrentRoom.SetCustomProperties(rndc);
-            yield return new WaitUntil(() => CustomCheck1 == rnd && Cus2DeckListCounter ==2);
+            yield return new WaitUntil(() => CustomCheck1 == rnd && Cus2DeckListCounter == 2);
             photonView.RPC(nameof(RoadBattleScene), RpcTarget.All);
         }
         else
@@ -163,7 +165,7 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
         PhotonNetwork.IsMessageQueueRunning = false;
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
     }
-    private void Custom2DeckList(string a,List<int> l)
+    private void Custom2DeckList(string a, List<int> l)
     {
         if (PhotonNetwork.CurrentRoom.CustomProperties[a + "DeckNum"] is int vvalue)
         {
@@ -172,10 +174,10 @@ public class MatchmakingView : MonoBehaviourPunCallbacks
             {
                 if (PhotonNetwork.CurrentRoom.CustomProperties[a + "Deck" + iii] is int value)
                 {
-                    l.Add((int)PhotonNetwork.CurrentRoom.CustomProperties[a+ "Deck" + iii]);
+                    l.Add((int)PhotonNetwork.CurrentRoom.CustomProperties[a + "Deck" + iii]);
                 }
             }
-            Cus2DeckListCounter+=1;
+            Cus2DeckListCounter += 1;
         }
     }
 }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc7d3a7a8e9e9584badff4e794cde669, type: 3}
+  m_Name: card12
+  m_EditorClassIdentifier: 
+  cardID: 12
+  name: "\u93E1"
+  manaList: d1000000d1000000
+  power: 0
+  Defence: 0
+  icon: {fileID: 21300000, guid: efba1b4c24c7ae94c968cbbcf643fb8e, type: 3}
+  CT: 0
+  MirrorRange: 3
+  MirrorType: 1
+  ReverseName: 
+  ReversemanaList: ca000000ca000000
+  Reversepower: 0
+  ReverseDefence: 0
+  ReverseIcon: {fileID: 21300000, guid: 4aae5cc6386b286429cdb619e066ae2a, type: 3}
+  ReverseCT: 0
+  ReverseMirrorRange: 3
+  ReverseMirrorType: 1
+  effect: []
+  Reverseeffect: []

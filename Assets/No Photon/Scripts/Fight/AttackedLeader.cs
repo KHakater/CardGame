@@ -12,7 +12,7 @@ public class AttackedLeader : MonoBehaviourPunCallbacks, IDropHandler
             /// 攻撃
             // attackerを選択　マウスポインターに重なったカードをアタッカーにする
             CardController attackCard = eventData.pointerDrag.GetComponent<CardController>();
-            GameManager.instance.AttackToLeader(attackCard, true);
+            //GameManager.instance.AttackToLeader(attackCard, true);
 
         }
     }

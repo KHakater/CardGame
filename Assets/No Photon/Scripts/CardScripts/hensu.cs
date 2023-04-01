@@ -11,5 +11,15 @@ namespace hensu
         Instant,
         Field,
         Building,
-    };  
+        Leader,
+    };
+
+    [System.Serializable]
+    public struct EffectSetting
+    {
+        [SerializeField]
+        public string effectname;
+        [SerializeField]
+        public List<int> effectint;
+    }
 }

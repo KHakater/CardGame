@@ -24,7 +24,7 @@ public class AspectKeeper : MonoBehaviour
         var magRate = targetAspect / screenAspect; //目的アスペクト比にするための倍率
 
         var viewportRect = new Rect(0, 0, 1, 1); //Viewport初期値でRectを作成
-        
+
         if (magRate < 1)
         {
             viewportRect.width = magRate; //使用する横幅を変更
@@ -39,10 +39,5 @@ public class AspectKeeper : MonoBehaviour
         }
 
         targetCamera.rect = viewportRect; //カメラのViewportに適用
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            Debug.Log(magRate);
-            Debug.Log(viewportRect);
-        }
     }
 }

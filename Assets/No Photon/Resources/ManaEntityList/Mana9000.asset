@@ -17,4 +17,4 @@ MonoBehaviour:
   MaxMana: 0
   NowMana: 0
   ManaColor: 09000000
-  ImageMana: {fileID: 0}
+  ImageMana: {fileID: 21300000, guid: b52bb0b74cd02d440b8dfa8abb26f515, type: 3}

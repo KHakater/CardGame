@@ -11,13 +11,13 @@ public class ManaModel : MonoBehaviour
     public Sprite icon;
     public bool MastersCard = false;
     public List<int> color;
-    public ManaModel(int cardID, bool playerCard,int max,int useful) // データを受け取り、その処理
+    public ManaModel(int cardID, bool playerCard, int max, int now) // データを受け取り、その処理
     {
         ManaEntity me = Resources.Load<ManaEntity>("ManaEntityList/Mana" + cardID);
         CardID = me.ManaID;
         Name = me.ManaName;
         maxmana = max;
-        nowmana = useful;
+        nowmana = now;
         icon = me.ImageMana;
         MastersCard = playerCard;
         color = me.ManaColor;

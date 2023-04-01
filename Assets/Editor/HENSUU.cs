@@ -12,6 +12,7 @@ public class HENSUU : Editor
     public override void OnInspectorGUI()
     {
         EditorGUI.BeginChangeCheck();
+        serializedObject.Update();
         var entity = target as CardEntity;
         var r = EditorGUILayout.MaskField("対象範囲", entity.MirrorRange, ranges1);
         entity.MirrorRange = r;
@@ -19,23 +20,71 @@ public class HENSUU : Editor
         entity.MirrorType = t;
         entity.cardID = EditorGUILayout.IntField("cardID", entity.cardID);
         entity.name = EditorGUILayout.TextField("name", entity.name);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("manaList"), true);//こっちも変更
         entity.power = EditorGUILayout.IntField("power", entity.power);
         entity.Defence = EditorGUILayout.IntField("defence", entity.Defence);
-        EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Source Image");
         entity.icon = (Sprite)EditorGUILayout.ObjectField(entity.icon, typeof(Sprite), allowSceneObjects: true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("manaList"), true);//こっちも変更
+
+        var listProperty = serializedObject.FindProperty("manaList");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                listProperty.InsertArrayElementAtIndex(listProperty.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (listProperty.arraySize >= 1)
+                {
+                    listProperty.DeleteArrayElementAtIndex(listProperty.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                listProperty.ClearArray();
+            }
+        }
         EditorGUILayout.EndHorizontal();
+
         entity.CT = (Cardtype)EditorGUILayout.EnumPopup("EnumPopup", (System.Enum)entity.CT);
-
         EditorGUILayout.Space();
-
         var rr = EditorGUILayout.MaskField("Reverse対象範囲", entity.ReverseMirrorRange, ranges1);
         entity.ReverseMirrorRange = rr;
         var rt = EditorGUILayout.MaskField("Reverse対象種類", entity.ReverseMirrorType, Types1);
         entity.ReverseMirrorType = rt;
         entity.ReverseName = EditorGUILayout.TextField("Reversename", entity.ReverseName);
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("ReversemanaList"), true);
+        var listProperty2 = serializedObject.FindProperty("ReversemanaList");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                listProperty2.InsertArrayElementAtIndex(listProperty2.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (listProperty2.arraySize >= 1)
+                {
+                    listProperty2.DeleteArrayElementAtIndex(listProperty2.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                listProperty2.ClearArray();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
         entity.Reversepower = EditorGUILayout.IntField("Reversepower", entity.Reversepower);
         entity.ReverseDefence = EditorGUILayout.IntField("Reversedefence", entity.ReverseDefence);
         //entity.ReverseIcon = EditorGUILayout.PropertyField(serializedObject.FindProperty("ReverseIcon"), new GUIContent("ReverseIcon"));
@@ -45,18 +94,65 @@ public class HENSUU : Editor
         entity.ReverseIcon = (Sprite)EditorGUILayout.ObjectField(entity.ReverseIcon, typeof(Sprite), allowSceneObjects: true);
         EditorGUILayout.EndHorizontal();
         entity.ReverseCT = (Cardtype)EditorGUILayout.EnumPopup("ReverseEnumPopup", (System.Enum)entity.ReverseCT);
-        // pokemon.Type == 0 の場合、未選択
-        // pokemon.Type == 1 の場合、「ほのお」
-        // pokemon.Type == 2 の場合、「みず」
-        // pokemon.Type == 3 の場合、「ほのお」「みず」
-        // pokemon.Type == 4 の場合、「くさ」
-        // pokemon.Type == 5 の場合、「ほのお」「くさ」
-        // pokemon.Type == 6 の場合、「みず」「くさ」
-        // pokemon.Type == 7 の場合、「ほのお」「みず」「くさ」
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("effect"), true);
+        var ef = serializedObject.FindProperty("effect");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                ef.InsertArrayElementAtIndex(ef.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (ef.arraySize >= 1)
+                {
+                    ef.DeleteArrayElementAtIndex(ef.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                ef.ClearArray();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Reverseeffect"), true);
+        var ef2 = serializedObject.FindProperty("Reverseeffect");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                ef2.InsertArrayElementAtIndex(ef2.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (ef2.arraySize >= 1)
+                {
+                    ef2.DeleteArrayElementAtIndex(ef2.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                ef2.ClearArray();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(entity, "Change Property");
             EditorUtility.SetDirty(entity);
         }
+        serializedObject.ApplyModifiedProperties();
     }
 }

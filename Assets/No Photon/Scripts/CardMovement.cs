@@ -6,13 +6,22 @@ using Photon.Pun;
 public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public Transform cardParent;
+    public GameObject canvas;
+    private RectTransform rectTransform;
+    void Awake()
+    {
+        canvas = GameObject.Find("Canvas");
+    }
     public void OnBeginDrag(PointerEventData eventData) // ドラッグを始めるときに行う処理
     {
         if (GameManager.instance.isMyTurn)
         {
             cardParent = transform.parent;
-            transform.SetParent(cardParent.parent, false);
+            transform.parent = canvas.transform;
+            transform.position = cardParent.transform.position;
             GetComponent<CanvasGroup>().blocksRaycasts = false; // blocksRaycastsをオフにする
+            rectTransform = GetComponent<RectTransform>();
+            rectTransform.localScale = new Vector3(1, 1, 1);
         }
     }
 
@@ -20,15 +29,30 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
     {
         if (GameManager.instance.isMyTurn)
         {
-            transform.position = eventData.position;
+            rectTransform = GetComponent<RectTransform>();
+            // Vector2 localPosition = GetLocalPosition(eventData.position);
+            // rectTransform.localPosition = localPosition;
+            // //transform.position = eventData.position;
+            // if (Input.GetKeyDown(KeyCode.P))
+            // {
+            //     Debug.Log(GetComponent<RectTransform>().position);
+            // }
+            rectTransform.localPosition = new Vector3(-(float)Screen.width / 2 + eventData.position.x, -(float)Screen.height / 2 + eventData.position.y, 0);
         }
     }
-
+    private Vector2 GetLocalPosition(Vector2 screenPosition)
+    {
+        Vector2 result = Vector2.zero;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPosition, Camera.main, out result);
+        return result;
+    }
     public void OnEndDrag(PointerEventData eventData) // カードを離したときに行う処理
     {
         if (GameManager.instance.isMyTurn)
         {
             transform.SetParent(cardParent, false);
+            rectTransform.localScale = new Vector3(1, 1, 1);
+            transform.position = cardParent.transform.position;
             GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using hensu;
 
 public class CardModel
 {
@@ -18,46 +19,55 @@ public class CardModel
     public int CardPlace;
     public int MirrorRange;
     public int MirrorType;
-
-
-    public string Reversename;
-    public List<int> ReverseMlist = new List<int>();
-    public int Reversepower;
-    public int ReverseDefence;
-    public Sprite Reverseicon;
-    public string ReverseCTM;
-    public int ReverseMirrorRange;
-    public int ReverseMirrorType;
     public bool IsFace = true;
-    public CardModel(int cardID, bool playerCard, int CP, bool isfase) // データを受け取り、その処理
+    public int LeaderHP;
+    public List<EffectSetting> effects;
+    public bool CanSee;
+    public CardModel(int cardID, bool playerCard, int CP, bool isfase, bool cansee) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
+        IsFace = isfase;
+        CTM = cardEntity.CT.ToString();
+        if (CTM == "Leader")
+        {
+            LeaderHP = 20;
+        }
+        else
+        {
+            if (isfase)
+            {
+                name = cardEntity.name;
+                Mlist = cardEntity.manaList;
+                power = cardEntity.power;
+                Defence = cardEntity.Defence;
+                icon = cardEntity.icon;
+                MirrorRange = cardEntity.MirrorRange;
+                MirrorType = cardEntity.MirrorType;
+                effects = cardEntity.effect;
+            }
+            else
+            {
+                name = cardEntity.ReverseName;
+                Mlist = cardEntity.ReversemanaList;
+                power = cardEntity.Reversepower;
+                Defence = cardEntity.ReverseDefence;
+                icon = cardEntity.ReverseIcon;
+                MirrorRange = cardEntity.ReverseMirrorRange;
+                MirrorType = cardEntity.ReverseMirrorType;
+                effects = cardEntity.Reverseeffect;
+                CTM = cardEntity.ReverseCT.ToString();
+            }
+
+        }
         MastersCard = playerCard;
         CardID = cardEntity.cardID;
         MSelectable = false;
         CardPlace = CP;
-        IsFace = isfase;
-        if (isfase)
-        {
-            name = cardEntity.name;
-            Mlist = cardEntity.manaList;
-            power = cardEntity.power;
-            Defence = cardEntity.Defence;
-            icon = cardEntity.icon;
-            CTM = cardEntity.CT.ToString();
-            MirrorRange = cardEntity.MirrorRange;
-            MirrorType = cardEntity.MirrorType;
-        }
-        else
-        {
-            Reversename = cardEntity.ReverseName;
-            ReverseMlist = cardEntity.ReversemanaList;
-            Reversepower = cardEntity.Reversepower;
-            ReverseDefence = cardEntity.ReverseDefence;
-            Reverseicon = cardEntity.ReverseIcon;
-            ReverseCTM = cardEntity.ReverseCT.ToString();
-            ReverseMirrorRange = cardEntity.ReverseMirrorRange;
-            ReverseMirrorType = cardEntity.ReverseMirrorType;
-        }
+        CanSee = cansee;
+    }
+    public string GetReverseCTMValue()
+    {
+        CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + CardID);
+        return cardEntity.ReverseCT.ToString();
     }
 }

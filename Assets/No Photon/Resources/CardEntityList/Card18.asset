@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc7d3a7a8e9e9584badff4e794cde669, type: 3}
+  m_Name: Card18
+  m_EditorClassIdentifier: 
+  cardID: 18
+  name: "\u624B\u672D\u30B3\u30B9\u30C8"
+  manaList: d1000000
+  power: 0
+  Defence: 0
+  icon: {fileID: 21300000, guid: 83a9740237659ea4ca32f6f19ed0b332, type: 3}
+  CT: 1
+  MirrorRange: 0
+  MirrorType: 0
+  ReverseName: 
+  ReversemanaList: 
+  Reversepower: 3
+  ReverseDefence: 3
+  ReverseIcon: {fileID: 21300000, guid: 534e2e0996bcf3348b78864ab5b6bcd4, type: 3}
+  ReverseCT: 2
+  ReverseMirrorRange: 0
+  ReverseMirrorType: 0
+  effect:
+  - effectname: Draw
+    effectint: 0200000000000000
+  Reverseeffect: []

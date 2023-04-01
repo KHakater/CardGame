@@ -14,18 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: 4
   name: "\u8D64\uFF11"
-  manaList: 01000000
+  manaList: 6d000000
   power: 31
-  Defence: 0
+  Defence: 5
   icon: {fileID: 21300000, guid: ed68e8f1c1e846542a14b2075f3caaf4, type: 3}
   CT: 2
   MirrorRange: 0
   MirrorType: 0
   ReverseName: nnnnnnnn
-  ReversemanaList: 
+  ReversemanaList: 6d000000
   Reversepower: 5
   ReverseDefence: 5
   ReverseIcon: {fileID: 0}
   ReverseCT: 2
   ReverseMirrorRange: 0
   ReverseMirrorType: 0
+  effect: []
+  Reverseeffect: []

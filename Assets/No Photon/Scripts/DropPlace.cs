@@ -24,7 +24,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
                 Mirror = eventData.pointerDrag;
                 StartCoroutine("MirrorWait");
             }
-            else
+            else if (eventData.pointerDrag.GetComponent<CardController>().model.CTM != "Magic")
             {
                 CardMovement card = eventData.pointerDrag.GetComponent<CardMovement>(); // ドラッグしてきた情報からCardMovementを取得
                 if (card != null) // もしカードがあれば、
@@ -48,17 +48,21 @@ public class DropPlace : MonoBehaviour, IDropHandler
         yield return new WaitUntil(() => GM.ActChecker);
         if (GM.actReturn)
         {
-            GM.MonsterSummon(c.GetComponent<CardController>().model.Mlist, Num, c.gameObject.name);
+            if (c.GetComponent<CardController>().model.CTM == "Monster")
+            {
+                GM.MonsterSummon(c.GetComponent<CardController>().model.Mlist, Num, c.gameObject.name);
+            }
         }
         else
         {
             Debug.Log("CantSummon");
         }
-        yield return null;
+        yield break;
     }
     IEnumerator MirrorWait()
     {
         var a = Mirror.GetComponent<CardController>();
+        GM.ActChecker = false;
         GM.Activation(a.model.MastersCard, a.model.Mlist);
         yield return new WaitUntil(() => GM.ActChecker);//マナの支払いを待機
         if (GM.actReturn)
@@ -66,8 +70,10 @@ public class DropPlace : MonoBehaviour, IDropHandler
             yield return Mirror.GetComponent<CardController>().StartCoroutine("Mirrorcheck");
             GM.GMSelectPhaze = true;
             GM.SelectableList.Clear();
-            yield return new WaitWhile(() => GM.GMSelectPhaze); // flg がfalseになったら再開
+            GM.Mirror();
+            yield return new WaitWhile(() => GM.GMSelectPhaze); // flg がtrueになったら再開
             Debug.Log("finish");
+            GM.Mirror2();
             // string MirrorPorE = "MF";
             // if (a.model.CardPlace < 5)
             // {
@@ -80,14 +86,15 @@ public class DropPlace : MonoBehaviour, IDropHandler
             if (GM.ImMorN)
             {
                 GM.photonView.RPC("CreateCard", RpcTarget.All, GM.MirrorSelectedObj.GetComponent<CardController>().ID
-                , Num, "MF", "name");
+                , Num, "MF", "M" + GM.HandNameNum);
             }
             else
             {
                 GM.photonView.RPC("CreateCard", RpcTarget.All, GM.MirrorSelectedObj.GetComponent<CardController>().ID
-                , Num, "NF", "name");
+                , Num, "NF", "N" + GM.HandNameNum);
             }
-            Destroy(Mirror);
+            GM.HandNameNum += 1;
+            a.DestroyCard(a);
         }
         foreach (GameObject c in GameManager.instance.SelectableList)
         {
