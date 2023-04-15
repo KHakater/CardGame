@@ -94,7 +94,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
                 , Num, "NF", "N" + GM.HandNameNum);
             }
             GM.HandNameNum += 1;
-            a.DestroyCard(a);
+            GameManager.instance.GMDestroyCard(a.gameObject.name);
         }
         foreach (GameObject c in GameManager.instance.SelectableList)
         {

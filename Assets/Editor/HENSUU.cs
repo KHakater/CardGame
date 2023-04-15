@@ -19,13 +19,40 @@ public class HENSUU : Editor
         var t = EditorGUILayout.MaskField("対象種類", entity.MirrorType, Types1);
         entity.MirrorType = t;
         entity.cardID = EditorGUILayout.IntField("cardID", entity.cardID);
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("color"), true);//こっちも変更
+        var color = serializedObject.FindProperty("color");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                color.InsertArrayElementAtIndex(color.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (color.arraySize >= 1)
+                {
+                    color.DeleteArrayElementAtIndex(color.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                color.ClearArray();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
         entity.name = EditorGUILayout.TextField("name", entity.name);
         entity.power = EditorGUILayout.IntField("power", entity.power);
         entity.Defence = EditorGUILayout.IntField("defence", entity.Defence);
         EditorGUILayout.PrefixLabel("Source Image");
         entity.icon = (Sprite)EditorGUILayout.ObjectField(entity.icon, typeof(Sprite), allowSceneObjects: true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("manaList"), true);//こっちも変更
 
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("manaList"), true);//こっちも変更
         var listProperty = serializedObject.FindProperty("manaList");
         EditorGUILayout.BeginHorizontal();
         using (new EditorGUILayout.HorizontalScope())
@@ -59,6 +86,32 @@ public class HENSUU : Editor
         entity.ReverseMirrorType = rt;
         entity.ReverseName = EditorGUILayout.TextField("Reversename", entity.ReverseName);
 
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Reversecolor"), true);//こっちも変更
+        var rcolor = serializedObject.FindProperty("Reversecolor");
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            // 要素を追加
+            if (GUILayout.Button("Add"))
+            {
+                rcolor.InsertArrayElementAtIndex(rcolor.arraySize);
+            }
+            // 要素を削除
+            if (GUILayout.Button("Remove"))
+            {
+                if (rcolor.arraySize >= 1)
+                {
+                    rcolor.DeleteArrayElementAtIndex(rcolor.arraySize - 1);
+                }
+            }
+            // 要素をすべて削除
+            if (GUILayout.Button("Clear"))
+            {
+                rcolor.ClearArray();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("ReversemanaList"), true);
         var listProperty2 = serializedObject.FindProperty("ReversemanaList");
         EditorGUILayout.BeginHorizontal();
@@ -87,12 +140,8 @@ public class HENSUU : Editor
 
         entity.Reversepower = EditorGUILayout.IntField("Reversepower", entity.Reversepower);
         entity.ReverseDefence = EditorGUILayout.IntField("Reversedefence", entity.ReverseDefence);
-        //entity.ReverseIcon = EditorGUILayout.PropertyField(serializedObject.FindProperty("ReverseIcon"), new GUIContent("ReverseIcon"));
-        //EditorGUILayout.ObjectField("Icon", entity.ReverseIcon, typeof(Sprite), false);
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.PrefixLabel("Source Image");
+        EditorGUILayout.PrefixLabel("Rev Source Image");
         entity.ReverseIcon = (Sprite)EditorGUILayout.ObjectField(entity.ReverseIcon, typeof(Sprite), allowSceneObjects: true);
-        EditorGUILayout.EndHorizontal();
         entity.ReverseCT = (Cardtype)EditorGUILayout.EnumPopup("ReverseEnumPopup", (System.Enum)entity.ReverseCT);
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effect"), true);

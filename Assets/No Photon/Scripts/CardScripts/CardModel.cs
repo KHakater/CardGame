@@ -23,6 +23,7 @@ public class CardModel
     public int LeaderHP;
     public List<EffectSetting> effects;
     public bool CanSee;
+    public int color;
     public CardModel(int cardID, bool playerCard, int CP, bool isfase, bool cansee) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
@@ -44,6 +45,7 @@ public class CardModel
                 MirrorRange = cardEntity.MirrorRange;
                 MirrorType = cardEntity.MirrorType;
                 effects = cardEntity.effect;
+
             }
             else
             {

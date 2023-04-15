@@ -432,7 +432,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             //死んでも発生する処理
             if (ac.model.Defence <= 0)
             {
-                ac.DestroyCard(ac);
+                ac.DestroyCard();
             }
             ac.frame(false, ac.model.MSelectable);
         }
@@ -453,11 +453,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             //死んでも発生する処理
             if (ac.model.Defence <= 0)
             {
-                ac.DestroyCard(ac);
+                ac.DestroyCard();
             }
             if (dc.model.Defence <= 0)
             {
-                dc.DestroyCard(dc);
+                dc.DestroyCard();
             }
             ac.frame(false, ac.model.MSelectable);
             dc.frame(false, dc.model.MSelectable);
@@ -1163,6 +1163,20 @@ public class GameManager : MonoBehaviourPunCallbacks
                     break;
                 }
             }
+        }
+    }
+    public void GMDestroyCard(string name)
+    {
+        photonView.RPC("GMDC", RpcTarget.All, name);
+    }
+    [PunRPC]
+    void GMDC(string name)
+    {
+        var v = GameObject.Find(name);
+        Debug.Log(name + "---" + v.name);
+        if (v != null)
+        {
+            v.GetComponent<CardController>().DestroyCard();
         }
     }
 }

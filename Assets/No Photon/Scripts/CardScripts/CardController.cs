@@ -23,10 +23,10 @@ public class CardController : MonoBehaviour
         view.Show(model, isSelectCard); // 表示
         ID = cardID;
     }
-    public void DestroyCard(CardController card)
+    public void DestroyCard()
     {
         GameManager.instance.ifDestroyed(this);
-        Destroy(card.gameObject);
+        Destroy(gameObject);
     }
     public void StatusChange(int attack, int hp)//攻撃と体力を指定された値に変更し、表示する
     {
@@ -114,7 +114,7 @@ public class CardController : MonoBehaviour
         {
             setMethod.Invoke(ef, new object[] { model.effects[0].effectint }); // 引数を指定して実行
         }
-        DestroyCard(this);
+        GameManager.instance.GMDestroyCard(gameObject.name);
     }
     public void ActivationButtonPush()
     {

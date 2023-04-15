@@ -31,4 +31,5 @@ public class CardEntity : ScriptableObject
     public int ReverseMirrorType;
     [SerializeField] public List<EffectSetting> effect;
     [SerializeField] public List<EffectSetting> Reverseeffect;
+    [SerializeField] public List<int> color, Reversecolor;
 }
