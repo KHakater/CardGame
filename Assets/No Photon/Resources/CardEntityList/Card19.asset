@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Card19
   m_EditorClassIdentifier: 
   cardID: 19
-  name: 
+  name: 1
   manaList: 
   power: 0
   Defence: 0
@@ -31,3 +31,5 @@ MonoBehaviour:
   ReverseMirrorType: 0
   effect: []
   Reverseeffect: []
+  color: 00000000
+  Reversecolor: 

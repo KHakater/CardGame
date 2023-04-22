@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using hensu;
+using UnityEngine.UI;
 public class DeckManager : MonoBehaviour
 {
     public List<DeckEntity> AllCardList, tempList;
     public GameObject parentObj;
+    public DeckController CardObj;
     enum sortmode
     {
         mana,
@@ -16,7 +18,6 @@ public class DeckManager : MonoBehaviour
     sortmode SortMode = sortmode.mana;
     bool ASC = true;//昇順はTrue
     Dictionary<int, bool> ColorList = new Dictionary<int, bool> { };
-    public GameObject DisplayPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,17 +55,14 @@ public class DeckManager : MonoBehaviour
                 AllCardList.Add(vv);
             }
         }
+        SetCardList();
     }
     public void SetCardList()
     {
         tempList = AllCardList;
-        foreach (Transform child in parentObj.transform)
-        {
-            Destroy(child.gameObject);
-        }
         Color();
         Sort();
-
+        Display();
     }
     public void Color()
     {
@@ -92,28 +90,51 @@ public class DeckManager : MonoBehaviour
     }
     public void Sort()
     {
-        switch (SortMode)
+        if (tempList != null)
         {
-            case sortmode.mana:
-                tempList = tempList.OrderBy(CE => CE.manaList.Count).ThenBy(e => e.color).ThenBy(e => e.name).ToList();
-                break;
-            case sortmode.attack:
-                tempList = tempList.OrderBy(CE => CE.power).ThenBy(e => e.color).ThenBy(e => e.name).ToList();
-                break;
-            case sortmode.defence:
-                tempList = tempList.OrderBy(CE => CE.Defence).ThenBy(e => e.color).ThenBy(e => e.name).ToList();
-                break;
-            default:
-                break;
-        }
-        if (!ASC)
-        {
-            tempList.Reverse();
+            switch (SortMode)
+            {
+                case sortmode.mana://.ThenBy(e => e.color).ThenBy(e => e.name).ToList()
+                    tempList = tempList.OrderBy(CE => CE.manaList.Count).ToList();
+                    break;
+                case sortmode.attack:
+                    tempList = tempList.OrderBy(CE => CE.power).ToList();
+                    break;
+                case sortmode.defence:
+                    tempList = tempList.OrderBy(CE => CE.Defence).ToList();
+                    break;
+                default:
+                    break;
+            }
+            if (!ASC)
+            {
+                tempList.Reverse();
+            }
         }
     }
     public void Display()
     {
         //CardIDから元のカード情報を取得　そこからリストを表示
+        foreach (Transform child in parentObj.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (var value in tempList)//一時的マナリストの中から
+        {
+            DeckController smana = Instantiate(CardObj, new Vector3(0, 0, 0), Quaternion.identity);
+            smana.transform.SetParent(parentObj.transform);//条件に合うマナを作成・表示
+            smana.Init(value.cardID, value.isface);
+            smana.transform.localScale = new Vector3(1, 1, 1);
+            LayoutGroupSetting(smana.gameObject);
+        }
+    }
+    void LayoutGroupSetting(GameObject s)
+    {
+        s.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+        GridLayoutGroup layoutGroup = parentObj.GetComponent<GridLayoutGroup>();
+        layoutGroup.CalculateLayoutInputHorizontal();
+        layoutGroup.SetLayoutHorizontal();
+        s.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
     }
 }
 

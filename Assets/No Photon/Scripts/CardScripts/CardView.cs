@@ -6,7 +6,6 @@ using Photon.Pun;
 
 public class CardView : MonoBehaviourPunCallbacks
 {
-    [SerializeField] Text nameText, powerText, defenseText;
     [SerializeField] Image iconImage;
     [SerializeField] GameObject canAttackPanel;
     [SerializeField] GameObject canSelectPanel;

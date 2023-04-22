@@ -31,3 +31,5 @@ MonoBehaviour:
   ReverseMirrorType: 0
   effect: []
   Reverseeffect: []
+  color: 09000000
+  Reversecolor: 

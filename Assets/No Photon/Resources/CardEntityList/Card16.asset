@@ -33,3 +33,5 @@ MonoBehaviour:
   - effectname: N
     effectint: 
   Reverseeffect: []
+  color: 00000000
+  Reversecolor: 

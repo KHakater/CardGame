@@ -33,3 +33,5 @@ MonoBehaviour:
   - effectname: AtkUp
     effectint: 
   Reverseeffect: []
+  color: 09000000
+  Reversecolor: 

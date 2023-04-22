@@ -33,3 +33,5 @@ MonoBehaviour:
   - effectname: Draw
     effectint: 0200000000000000
   Reverseeffect: []
+  color: 00000000
+  Reversecolor: 
