@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 6963879436444254191}
   - component: {fileID: 1754390729522757144}
   - component: {fileID: 7141209239898915487}
+  - component: {fileID: 512560489803002832}
+  - component: {fileID: 7566010598462832269}
   m_Layer: 5
   m_Name: DeckPrefab
   m_TagString: Untagged
@@ -111,6 +113,32 @@ MonoBehaviour:
   MaruPanel: {fileID: 0}
   SikakuPanel: {fileID: 0}
   numObj: {fileID: 0}
+--- !u!114 &512560489803002832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963879436444254189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d63b7199d9e1776468b850f9fa1f8e1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  content: {fileID: 0}
+--- !u!225 &7566010598462832269
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963879436444254189}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6963879437035836642
 GameObject:
   m_ObjectHideFlags: 0

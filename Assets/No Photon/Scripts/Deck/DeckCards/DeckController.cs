@@ -7,6 +7,7 @@ public class DeckController : MonoBehaviour
     public DeckView view; // カードの見た目の処理
     public DeckModel model; // カードのデータを処理
     public int ID;
+    public bool Place;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -17,15 +18,5 @@ public class DeckController : MonoBehaviour
         model = new DeckModel(cardID, isfase); // カードデータを生成
         view.Show(model); // 表示
         ID = cardID;
-    }
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

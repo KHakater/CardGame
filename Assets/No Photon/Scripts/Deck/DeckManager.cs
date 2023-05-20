@@ -8,7 +8,9 @@ public class DeckManager : MonoBehaviour
 {
     public List<DeckEntity> AllCardList, tempList;
     public GameObject parentObj;
+    public GameObject DeckparentObj;
     public DeckController CardObj;
+    Dictionary<DeckController, int> DeckDic = new Dictionary<DeckController, int> { };//種類と個数
     enum sortmode
     {
         mana,
@@ -25,6 +27,7 @@ public class DeckManager : MonoBehaviour
         ColorList.Add(2, true);
         ColorList.Add(9, true);
         LoadCardList();
+        SaveManager.Instance.GameDateReceiving();
     }
     public void LoadCardList()
     {
@@ -33,29 +36,38 @@ public class DeckManager : MonoBehaviour
         {
             if (ce.cardID > 0)
             {
-                var v = new DeckEntity();
-                v.cardID = ce.cardID;
-                v.color = ce.color;
-                v.CT = ce.CT;
-                v.Defence = ce.Defence;
-                v.manaList = ce.manaList;
-                v.name = ce.name;
-                v.power = ce.power;
-                v.isface = true;
-                var vv = new DeckEntity();
-                vv.cardID = ce.cardID;
-                vv.color = ce.Reversecolor;
-                vv.CT = ce.ReverseCT;
-                vv.Defence = ce.ReverseDefence;
-                vv.manaList = ce.ReversemanaList;
-                vv.name = ce.ReverseName;
-                vv.power = ce.Reversepower;
-                vv.isface = false;
-                AllCardList.Add(v);
-                AllCardList.Add(vv);
+                AllCardList.Add(CreateEntity(ce, true));
+                AllCardList.Add(CreateEntity(ce, false));
             }
         }
         SetCardList();
+    }
+    DeckEntity CreateEntity(CardEntity ce, bool b)
+    {
+        var v = new DeckEntity();
+        if (b)
+        {
+            v.cardID = ce.cardID;
+            v.color = ce.color;
+            v.CT = ce.CT;
+            v.Defence = ce.Defence;
+            v.manaList = ce.manaList;
+            v.name = ce.name;
+            v.power = ce.power;
+            v.isface = true;
+        }
+        else
+        {
+            v.cardID = ce.cardID;
+            v.color = ce.Reversecolor;
+            v.CT = ce.ReverseCT;
+            v.Defence = ce.ReverseDefence;
+            v.manaList = ce.ReversemanaList;
+            v.name = ce.ReverseName;
+            v.power = ce.Reversepower;
+            v.isface = false;
+        }
+        return v;
     }
     public void SetCardList()
     {
@@ -124,17 +136,80 @@ public class DeckManager : MonoBehaviour
             DeckController smana = Instantiate(CardObj, new Vector3(0, 0, 0), Quaternion.identity);
             smana.transform.SetParent(parentObj.transform);//条件に合うマナを作成・表示
             smana.Init(value.cardID, value.isface);
+            smana.Place = false;
             smana.transform.localScale = new Vector3(1, 1, 1);
-            LayoutGroupSetting(smana.gameObject);
+            smana.GetComponent<DeckCardMovement>().content = parentObj.transform;
+            LayoutGroupSetting(smana.gameObject, parentObj);
         }
     }
-    void LayoutGroupSetting(GameObject s)
+    void LayoutGroupSetting(GameObject s, GameObject t)
     {
         s.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        GridLayoutGroup layoutGroup = parentObj.GetComponent<GridLayoutGroup>();
+        GridLayoutGroup layoutGroup = t.GetComponent<GridLayoutGroup>();
         layoutGroup.CalculateLayoutInputHorizontal();
         layoutGroup.SetLayoutHorizontal();
         s.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+    }
+    public void deckadd(DeckController dc)
+    {
+        bool b = false;
+        DeckController v = null;
+        foreach (KeyValuePair<DeckController, int> ce in DeckDic)
+        {
+            if (ce.Key.ID == dc.ID)
+            {
+                b = true;
+                v = ce.Key;
+                break;
+            }
+        }
+        if (b)
+        {
+            var i = DeckDic[v];
+            DeckDic[v] = i + 1;
+        }
+        else
+        {
+            //dcからID　IDからEntity　Entityから新しいdcを生成しインスタンスも作る
+            DeckController smana = Instantiate(CardObj, new Vector3(0, 0, 0), Quaternion.identity);
+            smana.transform.SetParent(DeckparentObj.transform);
+            smana.Init(dc.ID, dc.model.IsFace);
+            smana.Place = true;
+            smana.transform.localScale = new Vector3(1, 1, 1);
+            smana.GetComponent<DeckCardMovement>().content = DeckparentObj.transform;
+            LayoutGroupSetting(smana.gameObject, DeckparentObj);
+            DeckDic.Add(smana, 1);
+        }
+    }
+    public void deckremove(DeckController dc)
+    {
+        int i = DeckDic[dc];
+        if (i > 1)
+        {
+            DeckDic[dc] = i - 1;
+        }
+        else
+        {
+            DeckDic.Remove(dc);
+            Destroy(dc.gameObject);
+        }
+    }
+
+    public void ButtonPush()
+    {
+        int p = 0;
+        if (DeckDic != null)
+        {
+            foreach (KeyValuePair<DeckController, int> ce in DeckDic)
+            {
+                for (int i = 0; i < ce.Value; i++)
+                {
+                    SaveManager.Instance.FIELD1[0][p] = ce.Key.ID.ToString();
+                }
+                p += 1;
+            }
+            SaveManager.Instance.GameDataSending();
+        }
     }
 }
 
