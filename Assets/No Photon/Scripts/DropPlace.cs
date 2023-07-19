@@ -11,9 +11,11 @@ public class DropPlace : MonoBehaviour, IDropHandler
     public GameManager GM;
     public int Num;
     public GameObject Mirror;
+    public bool DPclickmode;
     public void Awake()
     {
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+        DPclickmode = false;
     }
     public void OnDrop(PointerEventData eventData) // ドロップされた時に行う処理
     {
@@ -103,5 +105,12 @@ public class DropPlace : MonoBehaviour, IDropHandler
         }
         GameManager.instance.SelectableList.Clear();
         yield return null;
+    }
+    public void Click()
+    {
+        if (DPclickmode == true)
+        {
+            GameManager.instance.MirrorSelectFinish(Num);
+        }
     }
 }

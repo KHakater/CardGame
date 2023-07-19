@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] Transform playerHand, enemyHand;
     [SerializeField] Transform playerMana, enemyMana;
     [SerializeField] public List<Transform> FieldList;
+    [SerializeField] public List<DropPlace> MirrorFieldList;
     [SerializeField] Text playerLeaderHPText;
     [SerializeField] Text enemyLeaderHPText;
     public Dictionary<int, Manacontroller> ManaDic, noManaDic, TempDic, PayManaDic = new Dictionary<int, Manacontroller>();
@@ -49,6 +50,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool SelectSuccess;
     public CardController MyLeader;//自分から見て相手  Masではない
     public CardController OpLeader;//相手から見て自分　Masではない
+    public bool Working;
+    public bool MirrorFlag;
+    public int MirrorNum;
 
     [SerializeField] public EffekseerEffectAsset effect;
     public void Awake()
@@ -82,8 +86,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 isMyTurn = false;
                 isMasterTurn = false;
             }
-            MyLeader.Init(-999, true, 999, true, true);
-            OpLeader.Init(-999, false, 998, true, true);
+            MyLeader.Init(-999, true, 999, true, true, false);
+            OpLeader.Init(-999, false, 998, true, true, false);
         }
         else
         {
@@ -108,11 +112,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                     isMasterTurn = false;
                 }
             }
-            OpLeader.Init(-999, true, 999, true, true);
-            MyLeader.Init(-999, false, 998, true, true);
+            OpLeader.Init(-999, true, 999, true, true, false);
+            MyLeader.Init(-999, false, 998, true, true, false);
         }
         ManaDic = new Dictionary<int, Manacontroller>() { };
         noManaDic = new Dictionary<int, Manacontroller>() { };
+        Working = false;
         StartGame();
     }
     void StartGame()
@@ -139,12 +144,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                 MasDeck.RemoveAt(0);
                 if (ImMorN)
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "M" + HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "M" + HandNameNum, false);
                     HandNameNum += 1;
                 }
                 else
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "N" + HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 20, "MH", "N" + HandNameNum, false);
                     HandNameNum += 1;
                 }
 
@@ -164,12 +169,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                 NoDeck.RemoveAt(0);
                 if (ImMorN)
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "M" + HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "M" + HandNameNum, false);
                     HandNameNum += 1;
                 }
                 else
                 {
-                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "N" + HandNameNum);
+                    photonView.RPC(nameof(CreateCard), RpcTarget.All, cardID, 21, "NH", "N" + HandNameNum, false);
                     HandNameNum += 1;
                 }
             }
@@ -507,99 +512,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             photonView.RPC(nameof(ManaCreate), RpcTarget.All, 2000, 1, true);
             photonView.RPC(nameof(ManaCreate), RpcTarget.All, 2000, 1, false);
         }
-        // if (Input.GetKeyDown(KeyCode.Alpha1))
-        // {
-        //     FieldList[2].GetChild(0).GetComponent<CardController>().StatusChange(8, 8);
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha2))
-        // {
-        //     FieldList[2].GetChild(0).GetComponent<CardController>().StatusChange(8, 6);
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha3))
-        // {
-        //     FieldList[3].GetChild(0).GetComponent<CardController>().DestroyCard(FieldList[3].GetChild(0).GetComponent<CardController>());
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha4))
-        // {
-        //     photonView.RPC(nameof(CreateCard), RpcTarget.All, 14, 1, "NF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        //     DrawCard("NH");
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha5))
-        // {
-        //     UIM.SetLeaderHPText(true, 1, true);
-        //     FieldList[2].GetChild(0).GetComponent<CardController>().DestroyCard(FieldList[2].GetChild(0).GetComponent<CardController>());
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha6))
-        // {
-        //     CreateCard(17, 2, "MF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha7))
-        // {
-        //     foreach (var n in noManaDic)
-        //     {//n.Value.model
-        //         var v = n.Value;
-        //         if (v.model.CardID == 1000)
-        //         {
-        //             v.Init(v.model.CardID, v.model.MastersCard, v.model.maxmana, 0);
-        //         }
-        //     }
-        //     photonView.RPC(nameof(CreateCard), RpcTarget.All, 17, 0, "MF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        //     photonView.RPC(nameof(CreateCard), RpcTarget.All, 17, 1, "MF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        //     photonView.RPC(nameof(CreateCard), RpcTarget.All, 17, 3, "MF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        //     photonView.RPC(nameof(CreateCard), RpcTarget.All, 17, 4, "MF", "M" + HandNameNum);
-        //     HandNameNum += 1;
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha8))
-        // {
-        //     UIM.StartCoroutine("ReverseEff");
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha9))
-        // {
-        //     for (int i = 0; i < 6; i++)
-        //     {
-        //         photonView.RPC(nameof(ManaCreate), RpcTarget.All, 1000, 1, true);
-        //     }
-        //     photonView.RPC(nameof(ManaCreate), RpcTarget.All, 9000, 1, false);
-        //     for (int i = 0; i < 6; i++)
-        //     {
-        //         photonView.RPC(nameof(ManaCreate), RpcTarget.All, 2000, 1, false);
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.Q))
-        // {
-        //     var v = FieldList[12].GetChild(0).GetComponent<CardController>();
-        //     v.Init(v.model.CardID, v.model.MastersCard, v.model.CardPlace, !v.model.IsFace, v.model.CanSee);
-        // }
-        // if (Input.GetKeyDown(KeyCode.W))
-        // {
-        //     foreach (var n in noManaDic)
-        //     {//n.Value.model
-        //         var v = n.Value;
-        //         if (v.model.CardID == 9000)
-        //         {
-        //             v.Init(v.model.CardID, v.model.MastersCard, v.model.maxmana, 0);
-        //         }
-        //     }
-        // }
-        // if (Input.GetKeyDown(KeyCode.E))
-        // {
-        //     foreach (var n in noManaDic)
-        //     {//n.Value.model
-        //         var v = n.Value;
-        //         if (v.model.CardID == 2000)
-        //         {
-        //             v.Init(v.model.CardID, v.model.MastersCard, v.model.maxmana, 0);
-        //         }
-        //     }
-        // }
     }
     [PunRPC]
-    public void CreateCard(int cardID, int NumI, string PorE, string cardname)//カード名は移動に必要らしい 起点はDropplace
+    public void CreateCard(int cardID, int NumI, string PorE, string cardname, bool isMI)//カード名は移動に必要らしい 起点はDropplace
     {
         CardController card = Instantiate(newcardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         // GameObject card2 = PhotonNetwork.Instantiate("Card-Field", new Vector3(0, 0, 0), Quaternion.identity);
@@ -609,13 +524,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, true, 20, true, true);//trueならマスターのカード
+                card.Init(cardID, true, 20, true, true, isMI);//trueならマスターのカード
                 card.transform.SetParent(playerHand);
                 card.transform.position = playerHand.transform.position;
             }
             else
             {
-                card.Init(cardID, true, 20, true, false);//falseなら非のカード
+                card.Init(cardID, true, 20, true, false, isMI);//falseなら非のカード
                 card.transform.SetParent(enemyHand);
                 card.transform.position = enemyHand.transform.position;
             }
@@ -625,14 +540,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, false, 21, true, false);///falseなら非のカード
+                card.Init(cardID, false, 21, true, false, isMI);///falseなら非のカード
                 card.transform.SetParent(enemyHand);
                 card.transform.position = enemyHand.transform.position;
 
             }
             else
             {
-                card.Init(cardID, false, 21, true, true);//数値はMaster側なら必ず20、違うなら必ず21
+                card.Init(cardID, false, 21, true, true, isMI);//数値はMaster側なら必ず20、違うなら必ず21
                 card.transform.SetParent(playerHand);
                 card.transform.position = playerHand.transform.position;
             }
@@ -641,13 +556,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (ImMorN)
             {
-                card.Init(cardID, true, NumI, true, true);
+                card.Init(cardID, true, NumI, true, true, isMI);
                 card.transform.SetParent(FieldList[NumI]);
                 card.transform.position = FieldList[NumI].position;
             }
             else
             {
-                card.Init(cardID, true, NumI, true, true);
+                card.Init(cardID, true, NumI, true, true, isMI);
                 card.transform.SetParent(FieldList[14 - NumI]);
                 card.transform.position = FieldList[14 - NumI].position;
             }
@@ -655,18 +570,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else if (PorE == "NF")
         {
+            // if (ImMorN)
+            // {
+            //     card.Init(cardID, false, NumI, true, true, isMI);
+            //     card.transform.SetParent(FieldList[14 - NumI]);
+            //     card.transform.position = FieldList[14 - NumI].position;
+
+            // }
+            // else
+            // {
+            //     card.Init(cardID, false, NumI, true, true, isMI);
+            //     card.transform.SetParent(FieldList[NumI]);
+            //     card.transform.position = FieldList[NumI].position;
+            // }
             if (ImMorN)
             {
-                card.Init(cardID, false, NumI, true, true);
-                card.transform.SetParent(FieldList[14 - NumI]);
-                card.transform.position = FieldList[14 - NumI].position;
-
+                card.Init(cardID, true, NumI, true, true, isMI);
+                card.transform.SetParent(FieldList[NumI]);
+                card.transform.position = FieldList[NumI].position;
             }
             else
             {
-                card.Init(cardID, false, NumI, true, true);
-                card.transform.SetParent(FieldList[NumI]);
-                card.transform.position = FieldList[NumI].position;
+                card.Init(cardID, true, NumI, true, true, isMI);
+                card.transform.SetParent(FieldList[14 - NumI]);
+                card.transform.position = FieldList[14 - NumI].position;
             }
         }
         card.transform.localScale = new Vector3(1, 1, 1);
@@ -686,7 +613,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             afP = 14 - afP;
             var v = card.GetComponent<CardController>().model;
-            card.GetComponent<CardController>().Init(v.CardID, v.MastersCard, 0, v.IsFace, true);
+            card.GetComponent<CardController>().Init(v.CardID, v.MastersCard, 0, v.IsFace, true, v.isMImage);
         }
         else if (afP > 19 && afP < 22)
         {
@@ -977,81 +904,81 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public IEnumerator Duplicate()
     {
-        if (isMyTurn && GMSelectPhaze == false)
-        {
-            SelectableList.Clear();
-            foreach (CardController c in AllCardList)
-            {
-                if (c.gameObject != null)
-                {
-                    SelectableList.Add(c.gameObject);
-                    c.frame(c.model.canAttack, true);
-                }
-            }
-            yield return StartCoroutine("CardListSet");
-            GMSelectPhaze = true;
-            yield return new WaitWhile(() => GMSelectPhaze); // flg がfalseになったら再開
-            if (SelectSuccess)
-            {
-                if (ImMorN)
-                {
-                    photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
-                    , 20, "MH", "M" + HandNameNum);
-                    HandNameNum += 1;
-                }
-                else
-                {
-                    photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
-                    , 21, "NH", "N" + HandNameNum);
-                    HandNameNum += 1;
-                }
-                scroll2.SetActive(false);
-                UIM.StartCoroutine("DupEff");
-            }
-            foreach (GameObject p in SelectableList)
-            {
-                var vv = p.GetComponent<CardController>();
-                vv.frame(vv.model.canAttack, false);
-            }
-            scroll2.SetActive(false);
-        }
+        // if (isMyTurn && GMSelectPhaze == false)
+        // {
+        //     SelectableList.Clear();
+        //     foreach (CardController c in AllCardList)
+        //     {
+        //         if (c.gameObject != null)
+        //         {
+        //             SelectableList.Add(c.gameObject);
+        //             c.frame(c.model.canAttack, true);
+        //         }
+        //     }
+        //     yield return StartCoroutine("CardListSet");
+        //     GMSelectPhaze = true;
+        //     yield return new WaitWhile(() => GMSelectPhaze); // flg がfalseになったら再開
+        //     if (SelectSuccess)
+        //     {
+        //         if (ImMorN)
+        //         {
+        //             photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
+        //             , 20, "MH", "M" + HandNameNum);
+        //             HandNameNum += 1;
+        //         }
+        //         else
+        //         {
+        //             photonView.RPC("CreateCard", RpcTarget.All, MirrorSelectedObj.GetComponent<CardController>().ID
+        //             , 21, "NH", "N" + HandNameNum);
+        //             HandNameNum += 1;
+        //         }
+        //         scroll2.SetActive(false);
+        //         UIM.StartCoroutine("DupEff");
+        //     }
+        //     foreach (GameObject p in SelectableList)
+        //     {
+        //         var vv = p.GetComponent<CardController>();
+        //         vv.frame(vv.model.canAttack, false);
+        //     }
+        //     scroll2.SetActive(false);
+        // }
         yield return null;
     }
     public IEnumerator Reverse()
     {
-        if (isMyTurn && GMSelectPhaze == false)
-        {
-            GMSelectPhaze = true;
-            yield return StartCoroutine("ReverseCheck");
-            yield return StartCoroutine("CardListSet");
-            yield return new WaitWhile(() => GMSelectPhaze);
-            if (SelectSuccess)
-            {
-                foreach (CardController c in AllCardList)
-                {
-                    if (c != null)
-                    {
-                        if (c.gameObject != null)
-                        {
-                            if (c.IndividualNumber == GMSelectNum)
-                            {
-                                MirrorSelectedObj = c.gameObject;
-                            }
-                        }
-                    }
-                }
-                var v = MirrorSelectedObj.GetComponent<CardController>();
-                v.Init(v.model.CardID, v.model.MastersCard, v.model.CardPlace, !v.model.IsFace, v.model.CanSee);
-                scroll2.SetActive(false);
-                UIM.StartCoroutine("ReverseEff");
-            }
-            foreach (GameObject p in SelectableList)
-            {
-                var vv = p.GetComponent<CardController>();
-                vv.frame(vv.model.canAttack, false);
-            }
-            scroll2.SetActive(false);
-        }
+        // if (isMyTurn && GMSelectPhaze == false)
+        // {
+        //     GMSelectPhaze = true;
+        //     yield return StartCoroutine("ReverseCheck");
+        //     yield return StartCoroutine("CardListSet");
+        //     yield return new WaitWhile(() => GMSelectPhaze);
+        //     if (SelectSuccess)
+        //     {
+        //         foreach (CardController c in AllCardList)
+        //         {
+        //             if (c != null)
+        //             {
+        //                 if (c.gameObject != null)
+        //                 {
+        //                     if (c.IndividualNumber == GMSelectNum)
+        //                     {
+        //                         MirrorSelectedObj = c.gameObject;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         var v = MirrorSelectedObj.GetComponent<CardController>();
+        //         v.Init(v.model.CardID, v.model.MastersCard, v.model.CardPlace, !v.model.IsFace, v.model.CanSee);
+        //         scroll2.SetActive(false);
+        //         UIM.StartCoroutine("ReverseEff");
+        //     }
+        //     foreach (GameObject p in SelectableList)
+        //     {
+        //         var vv = p.GetComponent<CardController>();
+        //         vv.frame(vv.model.canAttack, false);
+        //     }
+        //     scroll2.SetActive(false);
+        // }
         yield return null;
     }
     IEnumerator ReverseCheck()
@@ -1105,7 +1032,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             layoutGroup.SetLayoutHorizontal();
             sc.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
             var v = obj.GetComponent<CardController>();
-            sc.Init(v.model.CardID, true, 100, v.model.IsFace, true);
+            sc.Init(v.model.CardID, true, 100, v.model.IsFace, true, v.model.isMImage);
             v.IndividualNumber = i;
             sc.IndividualNumber = i;
             i += 1;
@@ -1177,6 +1104,159 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (v != null)
         {
             v.GetComponent<CardController>().DestroyCard();
+        }
+    }
+    public void MirrorPutSelect()
+    {
+        foreach (DropPlace d in MirrorFieldList)
+        {
+            if (d.transform.childCount == 0)
+            {
+                d.DPclickmode = true;
+            }
+        }
+    }
+    public void MirrorSelectFinish(int i)
+    {
+        MirrorNum = i;
+        foreach (DropPlace d in MirrorFieldList)
+        {
+            d.DPclickmode = true;
+            //光るみたいな処理
+        }
+        MirrorFlag = true;
+    }
+    public void CreateMirror(int NumI, bool PorE, bool isMI, bool MRot)//位置、PorE
+    {
+        if (ImMorN)
+        {
+            photonView.RPC(nameof(PunCreateMirror), RpcTarget.All, NumI, PorE, "M" + HandNameNum, isMI, MRot);
+        }
+        else
+        {
+            photonView.RPC(nameof(PunCreateMirror), RpcTarget.All, NumI, PorE, "N" + HandNameNum, isMI, MRot);
+        }
+    }
+    [PunRPC]
+    public void PunCreateMirror(int NumI, bool PorE, string MirrorName, bool isMImage, bool MRot)//カード名は移動に必要らしい 起点はDropplace
+    {
+        CardController card = Instantiate(newcardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        card.gameObject.name = MirrorName;//識別番号付ける
+        if (PorE)//マスター側に置く
+        {
+            if (ImMorN)
+            {
+                card.MirrorInit(-1, true, NumI, MRot, true, isMImage);
+                card.transform.SetParent(FieldList[NumI]);
+                card.transform.position = FieldList[NumI].position;
+            }
+            else
+            {
+                card.MirrorInit(-1, true, NumI, MRot, false, isMImage);
+                card.transform.SetParent(FieldList[61 - NumI]);
+                card.transform.position = FieldList[61 - NumI].position;
+            }
+
+        }
+        else
+        {
+            if (ImMorN)
+            {
+                card.MirrorInit(-1, false, NumI, MRot, false, isMImage);
+                card.transform.SetParent(FieldList[61 - NumI]);
+                card.transform.position = FieldList[61 - NumI].position;
+
+            }
+            else
+            {
+                card.MirrorInit(-1, false, NumI, MRot, true, isMImage);
+                card.transform.SetParent(FieldList[NumI]);
+                card.transform.position = FieldList[NumI].position;
+            }
+        }
+        card.transform.localScale = new Vector3(1, 1, 1);
+        CardList.Add(card);
+        AllCardList.Add(card);
+        if (ImMorN)
+        {
+            DoMirror();
+        }
+    }
+    public void DoMirror()//Master側のみが行う？ コピーを作成する処理
+    {
+        foreach (DropPlace d in MirrorFieldList)
+        {
+            if (d.transform.childCount != 0)
+            {
+                if (d.Num > 21 && d.Num < 28)//Master側
+                {
+                    for (int i = 22; i < 28; i++)
+                    {
+                        if (MirrorFieldList[i - 22].transform.childCount != 0)
+                        {
+                            if (2 * d.Num - i >= 0 && 2 * d.Num - i <= 6)
+                            {
+                                if (MirrorFieldList[2 * d.Num - i].transform.childCount == 0)
+                                {
+                                    photonView.RPC(nameof(PunCreateMirror), RpcTarget.All, 2 * d.Num - i, true, "M" + HandNameNum, true);
+                                    //コピーされた鏡を置く処理
+                                    HandNameNum += 1;
+                                }
+                            }
+                        }
+                    }
+                    for (int ii = 0; ii < 5; ii++)
+                    {
+                        if (FieldList[ii].transform.childCount != 0)
+                        {
+                            if (2 * d.Num - 45 - ii >= 0 && 2 * d.Num - 45 - ii <= 4)
+                            {
+                                if (FieldList[2 * d.Num - 45 - ii].childCount == 0)
+                                {
+                                    var v = FieldList[ii].GetChild(0).GetComponent<CardController>().model;
+                                    photonView.RPC(nameof(CreateCard), RpcTarget.All, v.CardID, 2 * d.Num - 45 - ii, "MF", "M" + HandNameNum, true);
+                                    //コピーされたカードを置く処理
+                                    HandNameNum += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (d.Num > 33 && d.Num < 40)//非Master側
+                {
+                    for (int i = 34; i < 40; i++)
+                    {
+                        if (MirrorFieldList[i - 22].transform.childCount != 0)
+                        {
+                            if (2 * d.Num - i >= 7 && 2 * d.Num - i <= 12)//ほんとにこの数値かは謎
+                            {
+                                // if (MirrorFieldList[2 * d.Num - i].transform.childCount == 0)
+                                // {
+                                //     photonView.RPC(nameof(PunCreateMirror), RpcTarget.All, 2 * d.Num - i, true, "M" + HandNameNum, true);
+                                //     //コピーされた鏡を置く処理
+                                //     HandNameNum += 1;
+                                // }
+                            }
+                        }
+                    }
+                    for (int ii = 10; ii < 15; ii++)
+                    {
+                        if (FieldList[ii].transform.childCount != 0)
+                        {
+                            if (2 * d.Num - 49 - ii >= 10 && 2 * d.Num - 49 - ii <= 15)
+                            {
+                                if (FieldList[2 * d.Num - 49 - ii].childCount == 0)
+                                {
+                                    var v = FieldList[ii].GetChild(0).GetComponent<CardController>().model;
+                                    photonView.RPC(nameof(CreateCard), RpcTarget.All, v.CardID, 2 * d.Num - 49 - ii, "NF", "M" + HandNameNum, true);
+                                    //コピーされたカードを置く処理
+                                    HandNameNum += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -14,6 +14,8 @@ public class CardView : MonoBehaviourPunCallbacks
     [SerializeField] GameObject MaruPanel;
     [SerializeField] GameObject SikakuPanel;
     [SerializeField] GameObject ura;
+    [SerializeField] GameObject NotMirrors;
+    [SerializeField] GameObject Mirrors;
     public GameObject numObj;
     GameObject tempatk, tempdef;
     public void Show(CardModel cardModel, bool isSelectCard) // cardModelのデータ取得と反映
@@ -22,8 +24,23 @@ public class CardView : MonoBehaviourPunCallbacks
         {
 
         }
+        else if (cardModel.CardID == -1)
+        {
+            NotMirrors.SetActive(false);
+            Mirrors.SetActive(true);
+            if (cardModel.MRot)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
         else
         {
+            NotMirrors.SetActive(true);
+            Mirrors.SetActive(false);
             if (cardModel.CanSee)
             {
                 //nameText.text = cardModel.name;
@@ -85,47 +102,47 @@ public class CardView : MonoBehaviourPunCallbacks
         int Back = -999;
         int count = 1;
         GameObject panel = null;
-        foreach (Transform child in ManaUIList.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        for (int i = 0; i < v.Count; i++)
-        {
-            if (v[i] == Back)//直前に追加したマナならば数字を一つ増やす
-            {
-                count += 1;
-                panel.transform.GetChild(0).GetComponent<Text>().text = count.ToString();
-            }
-            else
-            {
-                if (panel != null)
-                {
-                    panel.transform.GetChild(0).GetComponent<Text>().text = count.ToString();
-                }
-                if (v[i] / 100 == 1)
-                {
-                    panel = Instantiate(SikakuPanel, new Vector3(0, 0, 0), Quaternion.identity);//新しい種類を追加
-                }
-                else
-                {
-                    panel = Instantiate(MaruPanel, new Vector3(0, 0, 0), Quaternion.identity);//新しい種類を追加
-                }
-                if (v[i] % 10 == 9)
-                {
-                    panel.GetComponent<Image>().color = Color.white;
-                }
-                if (v[i] % 10 == 2)
-                {
-                    panel.GetComponent<Image>().color = Color.blue;
-                }
-                panel.transform.SetParent(ManaUIList);
-                panel.transform.localScale = new Vector3(1, 1, 1);
-                panel.transform.position = new Vector3(0, 0, 0);
-                panel.transform.GetChild(0).GetComponent<Text>().text = "1";
-                count = 1;
-                Back = v[i];
-            }
-        }
+        // foreach (Transform child in ManaUIList.transform)
+        // {
+        //     Destroy(child.gameObject);
+        // }
+        // for (int i = 0; i < v.Count; i++)
+        // {
+        //     if (v[i] == Back)//直前に追加したマナならば数字を一つ増やす
+        //     {
+        //         count += 1;
+        //         panel.transform.GetChild(0).GetComponent<Text>().text = count.ToString();
+        //     }
+        //     else
+        //     {
+        //         if (panel != null)
+        //         {
+        //             panel.transform.GetChild(0).GetComponent<Text>().text = count.ToString();
+        //         }
+        //         if (v[i] / 100 == 1)
+        //         {
+        //             panel = Instantiate(SikakuPanel, new Vector3(0, 0, 0), Quaternion.identity);//新しい種類を追加
+        //         }
+        //         else
+        //         {
+        //             panel = Instantiate(MaruPanel, new Vector3(0, 0, 0), Quaternion.identity);//新しい種類を追加
+        //         }
+        //         if (v[i] % 10 == 9)
+        //         {
+        //             panel.GetComponent<Image>().color = Color.white;
+        //         }
+        //         if (v[i] % 10 == 2)
+        //         {
+        //             panel.GetComponent<Image>().color = Color.blue;
+        //         }
+        //         panel.transform.SetParent(ManaUIList);
+        //         panel.transform.localScale = new Vector3(1, 1, 1);
+        //         panel.transform.position = new Vector3(0, 0, 0);
+        //         panel.transform.GetChild(0).GetComponent<Text>().text = "1";
+        //         count = 1;
+        //         Back = v[i];
+        //     }
+        // }
     }
     public void SetCanAttackPanel(bool flag)
     {
