@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: 2
   name: "\u8D642"
-  manaList: 6d0000006d000000
+  NeedMana: 1
   power: 3
   Defence: 1
-  icon: {fileID: 21300000, guid: c1980abec00da2d4881407f8f33a2464, type: 3}
+  icon: {fileID: 21300000, guid: ec1d5cc63c05bbd439b673eb0315db25, type: 3}
   CT: 2
   MirrorRange: 0
   MirrorType: 0
   ReverseName: hanntennMirror
-  ReversemanaList: 6d000000
+  ReverseNeedMana: 0
   Reversepower: 0
   ReverseDefence: 0
   ReverseIcon: {fileID: 0}
-  ReverseCT: 0
+  ReverseCT: 2
   ReverseMirrorRange: 2147483647
   ReverseMirrorType: 2147483647
   effect: []

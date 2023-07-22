@@ -23,9 +23,9 @@ public class CardController : MonoBehaviour
         view.Show(model, isSelectCard); // 表示
         ID = cardID;
     }
-    public void MirrorInit(int cardID, bool playerCard, int cardplace, bool MRot, bool none, bool isMImage) // カードを生成した時に呼ばれる関数
+    public void MirrorInit(int cardID, bool playerCard, int cardplace, bool isMImage) // カードを生成した時に呼ばれる関数
     {
-        model = new CardModel(cardID, playerCard, cardplace, MRot, none, isMImage); // カードデータを生成
+        model = new CardModel(cardID, playerCard, cardplace, true, true, isMImage); // カードデータを生成
         view.Show(model, isSelectCard); // 表示
         ID = cardID;
     }
@@ -128,13 +128,11 @@ public class CardController : MonoBehaviour
     }
     public IEnumerator ColAct()
     {
-        GameManager.instance.Activation(model.MastersCard, model.Mlist);
-        GameManager.instance.ActChecker = false;
-        yield return new WaitUntil(() => GameManager.instance.ActChecker);//マナの支払いを待機
-        if (GameManager.instance.actReturn)
+        if (GameManager.instance.Activation(model.MastersCard, model.NeedMana))
         {
             MagicEffect();
         }
+        yield return null;
     }
     public void MirrorButtonPush()
     {
@@ -150,7 +148,7 @@ public class CardController : MonoBehaviour
         GameManager.instance.MirrorPutSelect();
         yield return new WaitUntil(() => GameManager.instance.MirrorFlag);
         //Mirrorを新たに生成
-        GameManager.instance.CreateMirror(GameManager.instance.MirrorNum, model.MastersCard, true, true);//鏡の向きの決め方
+        GameManager.instance.CreateMirror(GameManager.instance.MirrorNum, model.MastersCard, true);
         GameManager.instance.Working = false;
         DestroyCard();
     }

@@ -8,7 +8,7 @@ public class CardEntity : ScriptableObject
 {//HENSUUがEditor内に存在
     public int cardID;
     public new string name;
-    [SerializeField] public List<int> manaList = new List<int>();
+    public int NeedMana;
     public int power;
     public int Defence;
     [SerializeField] public Sprite icon;
@@ -20,7 +20,7 @@ public class CardEntity : ScriptableObject
 
 
     public string ReverseName;
-    [SerializeField] public List<int> ReversemanaList = new List<int>();
+    public int ReverseNeedMana;
     public int Reversepower;
     public int ReverseDefence;
     [SerializeField] public Sprite ReverseIcon;

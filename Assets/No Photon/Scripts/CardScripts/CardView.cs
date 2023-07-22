@@ -28,14 +28,6 @@ public class CardView : MonoBehaviourPunCallbacks
         {
             NotMirrors.SetActive(false);
             Mirrors.SetActive(true);
-            if (cardModel.MRot)
-            {
-
-            }
-            else
-            {
-
-            }
         }
         else
         {
@@ -98,7 +90,7 @@ public class CardView : MonoBehaviourPunCallbacks
     }
     void ManaShow(CardModel CM)
     {
-        var v = CM.Mlist;
+        //var v = CM.Mlist;
         int Back = -999;
         int count = 1;
         GameObject panel = null;

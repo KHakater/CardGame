@@ -34,7 +34,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
                     var v = card.GetComponent<CardController>().model;
                     if (20 <= v.CardPlace && v.CardPlace <= 22)//フィールドからは動かせない
                     {
-                        if (GM.FieldList[Num].transform.childCount == 0)
+                        if (GM.field.FieldList[Num].transform.childCount == 0)
                         {
                             StartCoroutine("col", card);
                         }
@@ -46,13 +46,13 @@ public class DropPlace : MonoBehaviour, IDropHandler
     IEnumerator col(CardMovement c)
     {
         GM.ActChecker = false;
-        GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.Mlist);
-        yield return new WaitUntil(() => GM.ActChecker);
-        if (GM.actReturn)
+        // GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.NeedMana);
+        // yield return new WaitUntil(() => GM.ActChecker);
+        if (GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.NeedMana))
         {
             if (c.GetComponent<CardController>().model.CTM == "Monster")
             {
-                GM.MonsterSummon(c.GetComponent<CardController>().model.Mlist, Num, c.gameObject.name);
+                GM.MonsterSummon(Num, c.gameObject.name);
             }
         }
         else
@@ -61,13 +61,13 @@ public class DropPlace : MonoBehaviour, IDropHandler
         }
         yield break;
     }
-    IEnumerator MirrorWait()
+    IEnumerator MirrorWait()//OnDropから
     {
         var a = Mirror.GetComponent<CardController>();
         GM.ActChecker = false;
-        GM.Activation(a.model.MastersCard, a.model.Mlist);
-        yield return new WaitUntil(() => GM.ActChecker);//マナの支払いを待機
-        if (GM.actReturn)
+        // GM.Activation(a.model.MastersCard, a.model.NeedMana);
+        // yield return new WaitUntil(() => GM.ActChecker);//マナの支払いを待機
+        if (GM.Activation(a.model.MastersCard, a.model.NeedMana))
         {
             yield return Mirror.GetComponent<CardController>().StartCoroutine("Mirrorcheck");
             GM.GMSelectPhaze = true;

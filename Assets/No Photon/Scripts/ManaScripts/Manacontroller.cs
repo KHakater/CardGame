@@ -26,6 +26,6 @@ public class Manacontroller : MonoBehaviour
     }
     public void OnButton()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().OnButton(model.CardID, this.gameObject.GetComponent<Manacontroller>());
+        //GameObject.Find("GameManager").GetComponent<GameManager>().OnButton(model.CardID, this.gameObject.GetComponent<Manacontroller>());
     }
 }

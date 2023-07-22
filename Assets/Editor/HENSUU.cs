@@ -47,36 +47,11 @@ public class HENSUU : Editor
         EditorGUILayout.EndHorizontal();
 
         entity.name = EditorGUILayout.TextField("name", entity.name);
+        entity.NeedMana = EditorGUILayout.IntField("NeedMana", entity.NeedMana);
         entity.power = EditorGUILayout.IntField("power", entity.power);
         entity.Defence = EditorGUILayout.IntField("defence", entity.Defence);
         EditorGUILayout.PrefixLabel("Source Image");
         entity.icon = (Sprite)EditorGUILayout.ObjectField(entity.icon, typeof(Sprite), allowSceneObjects: true);
-
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("manaList"), true);//こっちも変更
-        var listProperty = serializedObject.FindProperty("manaList");
-        EditorGUILayout.BeginHorizontal();
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            // 要素を追加
-            if (GUILayout.Button("Add"))
-            {
-                listProperty.InsertArrayElementAtIndex(listProperty.arraySize);
-            }
-            // 要素を削除
-            if (GUILayout.Button("Remove"))
-            {
-                if (listProperty.arraySize >= 1)
-                {
-                    listProperty.DeleteArrayElementAtIndex(listProperty.arraySize - 1);
-                }
-            }
-            // 要素をすべて削除
-            if (GUILayout.Button("Clear"))
-            {
-                listProperty.ClearArray();
-            }
-        }
-        EditorGUILayout.EndHorizontal();
 
         entity.CT = (Cardtype)EditorGUILayout.EnumPopup("EnumPopup", (System.Enum)entity.CT);
         EditorGUILayout.Space();
@@ -112,32 +87,7 @@ public class HENSUU : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("ReversemanaList"), true);
-        var listProperty2 = serializedObject.FindProperty("ReversemanaList");
-        EditorGUILayout.BeginHorizontal();
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            // 要素を追加
-            if (GUILayout.Button("Add"))
-            {
-                listProperty2.InsertArrayElementAtIndex(listProperty2.arraySize);
-            }
-            // 要素を削除
-            if (GUILayout.Button("Remove"))
-            {
-                if (listProperty2.arraySize >= 1)
-                {
-                    listProperty2.DeleteArrayElementAtIndex(listProperty2.arraySize - 1);
-                }
-            }
-            // 要素をすべて削除
-            if (GUILayout.Button("Clear"))
-            {
-                listProperty2.ClearArray();
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-
+        entity.ReverseNeedMana = EditorGUILayout.IntField("ReverseNeedMana", entity.ReverseNeedMana);
         entity.Reversepower = EditorGUILayout.IntField("Reversepower", entity.Reversepower);
         entity.ReverseDefence = EditorGUILayout.IntField("Reversedefence", entity.ReverseDefence);
         EditorGUILayout.PrefixLabel("Rev Source Image");

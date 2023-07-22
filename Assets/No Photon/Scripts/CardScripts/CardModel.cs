@@ -7,7 +7,7 @@ public class CardModel
 {
     public int CardID;
     public string name;
-    public List<int> Mlist = new List<int>();
+    public int NeedMana;
     public int power;
     public int Defence;
     public Sprite icon;
@@ -24,8 +24,7 @@ public class CardModel
     public List<EffectSetting> effects;
     public bool CanSee;
     public int color;
-    public bool MRot;//trueで右falseで左
-    public bool isMImage;
+    public bool isMImage;//鏡像かどうか
     public CardModel(int cardID, bool playerCard, int CP, bool isfase, bool cansee, bool IsMImage) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
@@ -34,8 +33,8 @@ public class CardModel
             CTM = cardEntity.CT.ToString();
             MastersCard = playerCard;
             CardID = cardEntity.cardID;
-            MRot = isfase;
             isMImage = IsMImage;
+            CardPlace = CP;
         }
         else
         {
@@ -50,7 +49,7 @@ public class CardModel
                 if (isfase)
                 {
                     name = cardEntity.name;
-                    Mlist = cardEntity.manaList;
+                    NeedMana = cardEntity.NeedMana;
                     power = cardEntity.power;
                     Defence = cardEntity.Defence;
                     icon = cardEntity.icon;
@@ -62,7 +61,7 @@ public class CardModel
                 else
                 {
                     name = cardEntity.ReverseName;
-                    Mlist = cardEntity.ReversemanaList;
+                    NeedMana = cardEntity.ReverseNeedMana;
                     power = cardEntity.Reversepower;
                     Defence = cardEntity.ReverseDefence;
                     icon = cardEntity.ReverseIcon;
@@ -89,5 +88,9 @@ public class CardModel
     public void Mirrorinit()
     {
 
+    }
+    public void ParamCopyFrom(CardModel model)
+    {
+        power = model.power;
     }
 }

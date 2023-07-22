@@ -6,7 +6,6 @@ public class DeckModel : MonoBehaviour
 {
     public int CardID;
     public string Name;
-    public List<int> Mlist = new List<int>();
     public int power;
     public int Defence;
     public Sprite icon;
@@ -15,40 +14,40 @@ public class DeckModel : MonoBehaviour
     public int MirrorType;
     public bool IsFace = true;
     public List<EffectSetting> effects;
-    public DeckModel(int cardID, bool isfase) // データを受け取り、その処理
-    {
-        CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
-        IsFace = isfase;
-        CTM = cardEntity.CT.ToString();
-        if (isfase)
-        {
-            Name = cardEntity.name;
-            Mlist = cardEntity.manaList;
-            power = cardEntity.power;
-            Defence = cardEntity.Defence;
-            icon = cardEntity.icon;
-            MirrorRange = cardEntity.MirrorRange;
-            MirrorType = cardEntity.MirrorType;
-            effects = cardEntity.effect;
+    // public DeckModel(int cardID, bool isfase) // データを受け取り、その処理
+    // {
+    //     CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
+    //     IsFace = isfase;
+    //     CTM = cardEntity.CT.ToString();
+    //     if (isfase)
+    //     {
+    //         Name = cardEntity.name;
+    //         Mlist = cardEntity.manaList;
+    //         power = cardEntity.power;
+    //         Defence = cardEntity.Defence;
+    //         icon = cardEntity.icon;
+    //         MirrorRange = cardEntity.MirrorRange;
+    //         MirrorType = cardEntity.MirrorType;
+    //         effects = cardEntity.effect;
 
-        }
-        else
-        {
-            Name = cardEntity.ReverseName;
-            Mlist = cardEntity.ReversemanaList;
-            power = cardEntity.Reversepower;
-            Defence = cardEntity.ReverseDefence;
-            icon = cardEntity.ReverseIcon;
-            MirrorRange = cardEntity.ReverseMirrorRange;
-            MirrorType = cardEntity.ReverseMirrorType;
-            effects = cardEntity.Reverseeffect;
-            CTM = cardEntity.ReverseCT.ToString();
-        }
-        CardID = cardID;
-    }
-    public string GetReverseCTMValue()
-    {
-        CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + CardID);
-        return cardEntity.ReverseCT.ToString();
-    }
+    //     }
+    //     else
+    //     {
+    //         Name = cardEntity.ReverseName;
+    //         Mlist = cardEntity.ReversemanaList;
+    //         power = cardEntity.Reversepower;
+    //         Defence = cardEntity.ReverseDefence;
+    //         icon = cardEntity.ReverseIcon;
+    //         MirrorRange = cardEntity.ReverseMirrorRange;
+    //         MirrorType = cardEntity.ReverseMirrorType;
+    //         effects = cardEntity.Reverseeffect;
+    //         CTM = cardEntity.ReverseCT.ToString();
+    //     }
+    //     CardID = cardID;
+    // }
+    // public string GetReverseCTMValue()
+    // {
+    //     CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + CardID);
+    //     return cardEntity.ReverseCT.ToString();
+    // }
 }
