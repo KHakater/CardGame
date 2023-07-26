@@ -1514,7 +1514,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 80, y: 120}
+  m_CellSize: {x: 130, y: 130}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -3143,9 +3143,9 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.04775995
+    x: 0.10631099
     y: 0
-    width: 0.9044801
+    width: 0.787378
     height: 1
   near clip plane: 1
   far clip plane: 1000

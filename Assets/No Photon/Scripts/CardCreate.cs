@@ -65,13 +65,13 @@ public class CardCreate : MonoBehaviour
         {
             if (v.ImMorN)
             {
-                card.Init(cardID, true, NumI, true, true, isMI);
+                card.Init(cardID, false, NumI, true, true, isMI);
                 card.transform.SetParent(v.field.FieldList[NumI]);
                 card.transform.position = v.field.FieldList[NumI].position;
             }
             else
             {
-                card.Init(cardID, true, NumI, true, true, isMI);
+                card.Init(cardID, false, NumI, true, true, isMI);
                 card.transform.SetParent(v.field.FieldList[14 - NumI]);
                 card.transform.position = v.field.FieldList[14 - NumI].position;
             }

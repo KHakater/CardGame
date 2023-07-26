@@ -48,12 +48,44 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
     }
     public void OnEndDrag(PointerEventData eventData) // カードを離したときに行う処理
     {
-        if (GameManager.instance.isMyTurn)
+        if (!GameManager.instance.isMyTurn) return;
+        if (eventData.pointerEnter.GetComponent<DropPlace>() != null)
         {
-            transform.SetParent(cardParent, false);
-            rectTransform.localScale = new Vector3(1, 1, 1);
-            transform.position = cardParent.transform.position;
-            GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
+            var v = eventData.pointerEnter.GetComponent<DropPlace>();
+            // if (GameManager.instance.ImMorN)
+            // {
+            //     if (!(v.Num >= 0 && v.Num <= 4))
+            //     {
+            //         CantSummon();
+            //     }
+            // }
+            // else
+            // {
+            //     if (!(v.Num >= 11 && v.Num <= 14))
+            //     {
+            //         CantSummon();
+            //     }
+            // }
+
+            if (!(v.Num >= 0 && v.Num <= 4))
+            {
+                CantSummon();
+            }
         }
+        else
+        {
+            CantSummon();
+        }
+        //transform.SetParent(cardParent, false);
+        rectTransform.localScale = new Vector3(1, 1, 1);
+        //transform.position = cardParent.transform.position;
+        GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
+    }
+    public void CantSummon()
+    {
+        transform.SetParent(cardParent, false);
+        rectTransform.localScale = new Vector3(1, 1, 1);
+        transform.position = cardParent.transform.position;
+        GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
     }
 }

@@ -384,8 +384,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         var v = field.FieldList[ap];
         card.transform.SetParent(v);
         Debug.Log(card.transform.parent);
-        card.transform.parent = v;
-        Debug.Log(card.transform.parent);
         if (ImMorN)
         {
             card.GetComponent<CardController>().Move(ap);
@@ -394,6 +392,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             card.GetComponent<CardController>().Move(14 - ap);
         }
+        var t = v.GetComponent<GridLayoutGroup>();
+        t.CalculateLayoutInputHorizontal();
+        t.CalculateLayoutInputVertical();
+        t.SetLayoutHorizontal();
+        t.SetLayoutVertical();
         photonView.RPC(nameof(PunMoveCard), RpcTarget.Others, ap, s);
     }
     public void ifDestroyed(CardController c)
@@ -580,5 +583,29 @@ public class GameManager : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
+
+    public bool isPlayerField(int DropPlaceNumber)
+    {
+        return 0 <= DropPlaceNumber && DropPlaceNumber <= 4;
+    }
+    public bool isEnemyField(int DropPlaceNumber)
+    {
+        return 10 <= DropPlaceNumber && DropPlaceNumber <= 14;
+    }
+    public bool CanSummon(CardModel v, int Num)
+    {
+        if (20 <= v.CardPlace && v.CardPlace <= 22
+            && field.FieldList[Num].transform.childCount == 0)//フィールドからは動かせない
+        {
+            if ((isPlayerField(Num) && ImMorN) || (isEnemyField(Num) && !ImMorN))
+            {
+                if (Activation(v.MastersCard, v.NeedMana))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

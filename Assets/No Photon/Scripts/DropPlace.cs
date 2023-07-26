@@ -19,47 +19,32 @@ public class DropPlace : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData) // ドロップされた時に行う処理
     {
-        if (GM.GMSelectPhaze == false)
+        if (GM.GMSelectPhaze == true) return;
+        if (eventData.pointerDrag.GetComponent<CardMovement>() == null) return;
+        CardMovement card = eventData.pointerDrag.GetComponent<CardMovement>();
+        var v = eventData.pointerDrag.GetComponent<CardController>().model;
+        if (card == null || v == null) return;
+        if (v.CTM == "Mirror")
         {
-            if (eventData.pointerDrag.GetComponent<CardController>().model.CTM == "Mirror")
+            Mirror = eventData.pointerDrag;
+            StartCoroutine("MirrorWait");
+        }
+        else if (v.CTM != "Magic")
+        {
+            if (GameManager.instance.CanSummon(v, Num))
             {
-                Mirror = eventData.pointerDrag;
-                StartCoroutine("MirrorWait");
-            }
-            else if (eventData.pointerDrag.GetComponent<CardController>().model.CTM != "Magic")
-            {
-                CardMovement card = eventData.pointerDrag.GetComponent<CardMovement>(); // ドラッグしてきた情報からCardMovementを取得
-                if (card != null) // もしカードがあれば、
+                if (v.CTM == "Monster")
                 {
-                    var v = card.GetComponent<CardController>().model;
-                    if (20 <= v.CardPlace && v.CardPlace <= 22)//フィールドからは動かせない
-                    {
-                        if (GM.field.FieldList[Num].transform.childCount == 0)
-                        {
-                            StartCoroutine("col", card);
-                        }
-                    }
+                    GM.MonsterSummon(Num, card.gameObject.name);
                 }
             }
-        }
-    }
-    IEnumerator col(CardMovement c)
-    {
-        GM.ActChecker = false;
-        // GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.NeedMana);
-        // yield return new WaitUntil(() => GM.ActChecker);
-        if (GM.Activation(c.GetComponent<CardController>().model.MastersCard, c.GetComponent<CardController>().model.NeedMana))
-        {
-            if (c.GetComponent<CardController>().model.CTM == "Monster")
+            else
             {
-                GM.MonsterSummon(Num, c.gameObject.name);
+                Debug.Log("CantSummon");
+                card.CantSummon();
             }
+
         }
-        else
-        {
-            Debug.Log("CantSummon");
-        }
-        yield break;
     }
     IEnumerator MirrorWait()//OnDropから
     {
