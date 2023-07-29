@@ -364,15 +364,21 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 if (NeedMana <= mana.MasterNowMana)
                 {
+                    mana.MasterNowMana -= NeedMana;
+                    Debug.Log(mana.MasterNowMana.ToString());
                     return true;
                 }
+                Debug.Log(mana.MasterNowMana.ToString());
             }
             else
             {
                 if (NeedMana <= mana.NoMasterNowMana)
                 {
+                    mana.NoMasterNowMana -= NeedMana;
+                    Debug.Log(mana.NoMasterNowMana.ToString());
                     return true;
                 }
+                Debug.Log(mana.MasterNowMana.ToString());
             }
         }
         return false;
@@ -402,7 +408,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void ifDestroyed(CardController c)
     {
         CardList.Remove(c);
-        AllCardList.Remove(c);
     }
     public IEnumerator CardListSet()//将来的にカードを選択する効果処理をする時が来るので残す
     {
@@ -424,7 +429,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             layoutGroup.SetLayoutHorizontal();
             sc.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
             var v = obj.GetComponent<CardController>();
-            sc.Init(v.model.CardID, true, 100, v.model.IsFace, true, v.model.isMImage);
+            sc.Init(v.model.CardID, true, 100, v.model.IsFace, true, v.model.isKyouzou);
             v.IndividualNumber = i;
             sc.IndividualNumber = i;
             i += 1;
@@ -433,7 +438,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public void Mirror()//コピー対象を選ぶ処理
     {
-        foreach (CardController c in AllCardList)
+        foreach (CardController c in CardList)
         {
             if (c != null)
             {
@@ -504,85 +509,96 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void PunCreateMirror(int NumI, bool PorE, string MirrorName, bool isMImage)//カード名は移動に必要らしい 起点はDropplace
+    public void PunCreateMirror(int NumI, bool PorE, string MirrorName, bool isKyouzou)//カード名は移動に必要らしい 起点はDropplace
     {
-        cardCreate.CreateMirror(NumI, PorE, MirrorName, isMImage);
+        cardCreate.CreateMirror(NumI, PorE, MirrorName, isKyouzou);
     }
     public void DoMirror()//Master側のみが行う？ コピーを作成する処理
     {
+        foreach (CardController c in CardList)
+        {
+            if (!c.model.isKyouzou) continue;
+            if (c.model.CardID == -1) continue;
+            c.StatusMirrorChange(c.model.OriginalCM);
+        }
         foreach (DropPlace d in field.MirrorFieldList)
         {
-            if (d.transform.childCount != 0)
+            if (d.transform.childCount == 0) continue;
+            string s = "?";
+            if (ImMorN)
             {
-                if (d.Num > 21 && d.Num < 28)//Master側
+                s = "M";
+            }
+            else
+            {
+                s = "N";
+            }
+            if (d.Num > 21 && d.Num < 28)//Master側
+            {
+                for (int i = 22; i < 28; i++)
                 {
-                    for (int i = 22; i < 28; i++)
+                    if (field.MirrorFieldList[i - 22].transform.childCount == 0) continue;
+                    var n = 2 * d.Num - i;
+                    if (n >= 0 && n <= 6)
                     {
-                        if (field.MirrorFieldList[i - 22].transform.childCount != 0)
+                        if (field.MirrorFieldList[n].transform.childCount == 0)
                         {
-                            if (2 * d.Num - i >= 0 && 2 * d.Num - i <= 6)
-                            {
-                                if (field.MirrorFieldList[2 * d.Num - i].transform.childCount == 0)
-                                {
-                                    cardCreate.CreateMirror(2 * d.Num - i, true, "M" + HandNameNum, true);
-                                    //コピーされた鏡を置く処理
-                                    HandNameNum += 1;
-                                }
-                            }
-                        }
-                    }
-                    for (int ii = 0; ii < 5; ii++)
-                    {
-                        if (field.FieldList[ii].transform.childCount != 0)
-                        {
-                            if (2 * d.Num - 45 - ii >= 0 && 2 * d.Num - 45 - ii <= 4)
-                            {
-                                if (field.FieldList[2 * d.Num - 45 - ii].childCount == 0)
-                                {
-                                    var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
-                                    cardCreate.CreateCard(v.CardID, 2 * d.Num - 45 - ii, "MF", "M" + HandNameNum, true);
-                                    //コピーされたカードを置く処理
-                                    HandNameNum += 1;
-                                }
-                            }
+                            cardCreate.CreateMirror(n, true, s + HandNameNum, true);
+                            //コピーされた鏡を置く処理
+                            HandNameNum += 1;
                         }
                     }
                 }
-                if (d.Num > 33 && d.Num < 40)//非Master側
+                for (int ii = 0; ii < 5; ii++)
                 {
-                    for (int i = 34; i < 40; i++)
+                    if (field.FieldList[ii].transform.childCount == 0) continue;
+                    var n = 2 * d.Num - 45 - ii;
+                    if (n >= 0 && 2 * n <= 4)
                     {
-                        if (field.MirrorFieldList[i - 22].transform.childCount != 0)
+                        if (field.FieldList[n].childCount == 0)
                         {
-                            if (2 * d.Num - i >= 7 && 2 * d.Num - i <= 12)//ほんとにこの数値かは謎
-                            {
-                                // if (field.MirrorFieldList[2 * d.Num - i].transform.childCount == 0)
-                                // {
-                                //     //コピーされた鏡を置く処理
-                                //     HandNameNum += 1;
-                                // }
-                            }
+                            var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
+                            cardCreate.CreateKyouzou(v.CardID, n, "MF", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
+                            //コピーされたカードを置く処理
+                            HandNameNum += 1;
                         }
                     }
-                    for (int ii = 10; ii < 15; ii++)
+                }
+            }
+            if (d.Num > 33 && d.Num < 40)//非Master側
+            {
+                for (int i = 34; i < 40; i++)
+                {
+                    if (field.MirrorFieldList[i - 22].transform.childCount == 0) continue;
+                    var n = 2 * d.Num - i;
+                    if (n >= 12 && n <= 17)//ほんとにこの数値かは謎
                     {
-                        if (field.FieldList[ii].transform.childCount != 0)
+                        if (field.MirrorFieldList[n].transform.childCount == 0)
                         {
-                            if (2 * d.Num - 49 - ii >= 10 && 2 * d.Num - 49 - ii <= 15)
-                            {
-                                if (field.FieldList[2 * d.Num - 49 - ii].childCount == 0)
-                                {
-                                    var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
-                                    cardCreate.CreateCard(v.CardID, 2 * d.Num - 49 - ii, "NF", "M" + HandNameNum, true);
-                                    //コピーされたカードを置く処理
-                                    HandNameNum += 1;
-                                }
-                            }
+                            cardCreate.CreateMirror(n, true, s + HandNameNum, true);
+                            //コピーされた鏡を置く処理
+                            HandNameNum += 1;
+                        }
+                    }
+                }
+                for (int ii = 10; ii < 15; ii++)
+                {
+                    if (field.FieldList[ii].transform.childCount == 0) continue;
+                    var n = 2 * d.Num - 49 - ii;
+                    if (n >= 10 && n <= 15)
+                    {
+                        if (field.FieldList[n].childCount == 0)
+                        {
+                            var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
+                            cardCreate.CreateKyouzou(v.CardID, n, "NF", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
+                            //コピーされたカードを置く処理
+                            HandNameNum += 1;
                         }
                     }
                 }
             }
         }
+
     }
 
     public bool isPlayerField(int DropPlaceNumber)
@@ -595,17 +611,20 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public bool CanSummon(CardModel v, int Num)
     {
-        if (20 <= v.CardPlace && v.CardPlace <= 22
-            && field.FieldList[Num].transform.childCount == 0)//フィールドからは動かせない
+        if (!(20 <= v.CardPlace && v.CardPlace <= 21)) return false;//手札からのみ
+        Debug.Log("1");
+        if (field.FieldList[Num].transform.childCount != 0) return false;
+        Debug.Log("2");
+        if (isPlayerField(Num))
         {
-            if ((isPlayerField(Num) && ImMorN) || (isEnemyField(Num) && !ImMorN))
+            Debug.Log("3");
+            if (Activation(v.MastersCard, v.NeedMana))
             {
-                if (Activation(v.MastersCard, v.NeedMana))
-                {
-                    return true;
-                }
+                return true;
             }
+            Debug.Log("4");
         }
+        Debug.Log("5");
         return false;
     }
 }

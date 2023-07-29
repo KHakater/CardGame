@@ -19,6 +19,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData) // ドロップされた時に行う処理
     {
+        if (!GM.isMyTurn) return;
         if (GM.GMSelectPhaze == true) return;
         if (eventData.pointerDrag.GetComponent<CardMovement>() == null) return;
         CardMovement card = eventData.pointerDrag.GetComponent<CardMovement>();
@@ -43,7 +44,6 @@ public class DropPlace : MonoBehaviour, IDropHandler
                 Debug.Log("CantSummon");
                 card.CantSummon();
             }
-
         }
     }
     IEnumerator MirrorWait()//OnDropから

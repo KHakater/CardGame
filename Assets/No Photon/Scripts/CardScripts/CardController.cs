@@ -17,19 +17,24 @@ public class CardController : MonoBehaviour
         view = GetComponent<CardView>();
         ef = GameManager.instance.gameObject.GetComponent<EffectList>();
     }
-    public void Init(int cardID, bool playerCard, int cardplace, bool isfase, bool cansee, bool isMImage) // カードを生成した時に呼ばれる関数
+    public void Init(int cardID, bool playerCard, int cardplace, bool isfase, bool cansee, bool isKyouzou) // カードを生成した時に呼ばれる関数
     {
-        model = new CardModel(cardID, playerCard, cardplace, isfase, cansee, isMImage); // カードデータを生成
+        model = new CardModel(cardID, playerCard, cardplace, isfase, cansee, isKyouzou); // カードデータを生成
         view.Show(model, isSelectCard); // 表示
         ID = cardID;
     }
-    public void MirrorInit(int cardID, bool playerCard, int cardplace, bool isMImage) // カードを生成した時に呼ばれる関数
+    public void MirrorInit(int cardID, bool playerCard, int cardplace, bool isKyouzou) // カードを生成した時に呼ばれる関数
     {
-        model = new CardModel(cardID, playerCard, cardplace, true, true, isMImage); // カードデータを生成
+        model = new CardModel(cardID, playerCard, cardplace, true, true, isKyouzou); // カードデータを生成
         view.Show(model, isSelectCard); // 表示
         ID = cardID;
     }
-    public void DestroyCard()
+    public void DestroyCard()//ゲームの効果としての破壊
+    {
+        GameManager.instance.ifDestroyed(this);
+        Destroy(gameObject);
+    }
+    public void DeleteCard()//死亡時効果などを発生しない、ゲーム内部処理　
     {
         GameManager.instance.ifDestroyed(this);
         Destroy(gameObject);
@@ -61,7 +66,7 @@ public class CardController : MonoBehaviour
         //Debug.Log(model.MirrorRange.ToString() + "-" + model.MirrorType.ToString());
         //Debug.Log("range" + (model.MirrorRange & 1 << 0).ToString() + "-" + (model.MirrorRange & 2 << 0).ToString());
         //Debug.Log("type" + (model.MirrorType & 1 << 0).ToString() + "-" + (model.MirrorType & 2 << 0).ToString() + "-" + (model.MirrorType & 2 << 0).ToString());
-        foreach (CardController c in a.AllCardList)
+        foreach (CardController c in a.CardList)
         {
             if (!(c.model.CardPlace < 5 && (model.MirrorRange & 1 << 0) != 0) &&
             !(c.model.CardPlace == 20 && (model.MirrorRange & 2 << 0) != 0))
@@ -151,5 +156,10 @@ public class CardController : MonoBehaviour
         GameManager.instance.CreateMirror(GameManager.instance.MirrorNum, model.MastersCard, true);
         GameManager.instance.Working = false;
         DestroyCard();
+    }
+    public void StatusMirrorChange(CardModel cm)
+    {
+        model.power = cm.power;
+        model.Defence = cm.Defence;
     }
 }

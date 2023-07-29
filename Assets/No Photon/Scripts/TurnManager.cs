@@ -40,7 +40,7 @@ public class TurnManager : MonoBehaviour
         if (!v.ImMorN)
         {
             v.mana.NoMasterMaxMana += 1;
-            v.mana.MasterNowMana = v.mana.NoMasterMaxMana;
+            v.mana.NoMasterNowMana = v.mana.NoMasterMaxMana;
             v.hand.DrawCard("NH"); // 手札を一枚加える
             for (int i = 0; i < 5; i++)
             {

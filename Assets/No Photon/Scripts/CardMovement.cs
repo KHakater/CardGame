@@ -11,16 +11,15 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
     void Awake()
     {
         canvas = GameObject.Find("Canvas");
+        rectTransform = GetComponent<RectTransform>();
     }
     public void OnBeginDrag(PointerEventData eventData) // ドラッグを始めるときに行う処理
     {
+        cardParent = transform.parent;
         if (GameManager.instance.isMyTurn)
         {
-            cardParent = transform.parent;
             transform.parent = canvas.transform;
-            transform.position = cardParent.transform.position;
             GetComponent<CanvasGroup>().blocksRaycasts = false; // blocksRaycastsをオフにする
-            rectTransform = GetComponent<RectTransform>();
             rectTransform.localScale = new Vector3(1, 1, 1);
         }
     }
@@ -30,13 +29,6 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
         if (GameManager.instance.isMyTurn)
         {
             rectTransform = GetComponent<RectTransform>();
-            // Vector2 localPosition = GetLocalPosition(eventData.position);
-            // rectTransform.localPosition = localPosition;
-            // //transform.position = eventData.position;
-            // if (Input.GetKeyDown(KeyCode.P))
-            // {
-            //     Debug.Log(GetComponent<RectTransform>().position);
-            // }
             rectTransform.localPosition = new Vector3(-(float)Screen.width / 2 + eventData.position.x, -(float)Screen.height / 2 + eventData.position.y, 0);
         }
     }
@@ -48,6 +40,7 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
     }
     public void OnEndDrag(PointerEventData eventData) // カードを離したときに行う処理
     {
+        GameManager.instance.field.HandSort();
         if (!GameManager.instance.isMyTurn) return;
         if (eventData.pointerEnter.GetComponent<DropPlace>() != null)
         {
@@ -84,8 +77,6 @@ public class CardMovement : MonoBehaviourPunCallbacks, IDragHandler, IBeginDragH
     public void CantSummon()
     {
         transform.SetParent(cardParent, false);
-        rectTransform.localScale = new Vector3(1, 1, 1);
-        transform.position = cardParent.transform.position;
         GetComponent<CanvasGroup>().blocksRaycasts = true; // blocksRaycastsをオンにする
     }
 }

@@ -23,17 +23,17 @@ public class CardModel
     public int LeaderHP;
     public List<EffectSetting> effects;
     public bool CanSee;
-    public int color;
-    public bool isMImage;//鏡像かどうか
-    public CardModel(int cardID, bool playerCard, int CP, bool isfase, bool cansee, bool IsMImage) // データを受け取り、その処理
+    public bool isKyouzou;//鏡像かどうか
+    public CardModel OriginalCM;
+    public CardModel(int cardID, bool playerCard, int CP, bool isfase, bool cansee, bool isKYOUZOU) // データを受け取り、その処理
     {
         CardEntity cardEntity = Resources.Load<CardEntity>("CardEntityList/Card" + cardID);
-        if (cardID == -1)
+        if (cardID == -1)//フィールド上の鏡
         {
             CTM = cardEntity.CT.ToString();
             MastersCard = playerCard;
             CardID = cardEntity.cardID;
-            isMImage = IsMImage;
+            isKyouzou = isKYOUZOU;
             CardPlace = CP;
         }
         else
@@ -77,7 +77,7 @@ public class CardModel
             MSelectable = false;
             CardPlace = CP;
             CanSee = cansee;
-            isMImage = IsMImage;
+            isKyouzou = isKYOUZOU;
         }
     }
     public string GetReverseCTMValue()

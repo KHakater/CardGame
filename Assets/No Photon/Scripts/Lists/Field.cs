@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Field : MonoBehaviour
 {
     [SerializeField] public List<Transform> FieldList;
@@ -13,7 +13,7 @@ public class Field : MonoBehaviour
         {
             afP = 14 - afP;
             var v = card.GetComponent<CardController>().model;
-            card.GetComponent<CardController>().Init(v.CardID, v.MastersCard, 0, v.IsFace, true, v.isMImage);
+            card.GetComponent<CardController>().Init(v.CardID, v.MastersCard, 0, v.IsFace, true, v.isKyouzou);
         }
         else if (afP > 19 && afP < 22)
         {
@@ -29,8 +29,17 @@ public class Field : MonoBehaviour
         }
         card.transform.SetParent(FieldList[afP]);
     }
-    public void aaa(GameObject g, int a)
+    public void HandSort()
     {
-        g.transform.SetParent(FieldList[a]);
+        var t = FieldList[20].GetComponent<GridLayoutGroup>();
+        t.CalculateLayoutInputHorizontal();
+        t.CalculateLayoutInputVertical();
+        t.SetLayoutHorizontal();
+        t.SetLayoutVertical();
+        var t2 = FieldList[21].GetComponent<GridLayoutGroup>();
+        t2.CalculateLayoutInputHorizontal();
+        t2.CalculateLayoutInputVertical();
+        t2.SetLayoutHorizontal();
+        t2.SetLayoutVertical();
     }
 }
