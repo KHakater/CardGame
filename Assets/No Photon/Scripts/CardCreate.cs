@@ -118,10 +118,7 @@ public class CardCreate : MonoBehaviour
         }
         card.transform.localScale = new Vector3(1, 1, 1);
         v.CardList.Add(card);
-        if (v.ImMorN)
-        {
-            v.DoMirror();
-        }
+        v.DoMirror();
     }
 
     public void CreateKyouzou(int cardID, int NumI, string PorE, string cardname, CardModel cm)//カード名は移動に必要らしい 起点はDropplace
@@ -131,67 +128,35 @@ public class CardCreate : MonoBehaviour
         // GameObject card2 = PhotonNetwork.Instantiate("Card-Field", new Vector3(0, 0, 0), Quaternion.identity);
         // CardController card = card2.GetComponent<CardController>();
         card.gameObject.name = cardname;
-        if (PorE == "MH")//いずれ手札、フィールドなどによって分けていく
+        if (PorE == "TEMAE")
         {
             if (v.ImMorN)
             {
-                card.Init(cardID, true, 20, true, true, true);//trueならマスターのカード
-                card.transform.SetParent(playerHand);
-                card.transform.position = playerHand.transform.position;
+                card.Init(cardID, true, NumI, true, true, true);//ID,Master,CardPlace,isface,cansee,kyozou
+                card.transform.SetParent(v.field.FieldList[NumI]);
+                card.transform.position = v.field.FieldList[NumI].position;
             }
             else
             {
-                card.Init(cardID, true, 20, true, false, true);//falseなら非のカード
-                card.transform.SetParent(enemyHand);
-                card.transform.position = enemyHand.transform.position;
+                card.Init(cardID, false, 14 - NumI, true, true, true);
+                card.transform.SetParent(v.field.FieldList[NumI]);
+                card.transform.position = v.field.FieldList[NumI].position;
             }
 
         }
-        else if (PorE == "NH")
+        else if (PorE == "OKU")
         {
             if (v.ImMorN)
             {
-                card.Init(cardID, false, 21, true, false, true);///falseなら非のカード
-                card.transform.SetParent(enemyHand);
-                card.transform.position = enemyHand.transform.position;
-
-            }
-            else
-            {
-                card.Init(cardID, false, 21, true, true, true);//数値はMaster側なら必ず20、違うなら必ず21
-                card.transform.SetParent(playerHand);
-                card.transform.position = playerHand.transform.position;
-            }
-        }
-        else if (PorE == "MF")
-        {
-            if (v.ImMorN)
-            {
-                card.Init(cardID, true, NumI, true, true, true);
+                card.Init(cardID, false, 14 - NumI, true, true, true);
                 card.transform.SetParent(v.field.FieldList[NumI]);
                 card.transform.position = v.field.FieldList[NumI].position;
             }
             else
             {
                 card.Init(cardID, true, NumI, true, true, true);
-                card.transform.SetParent(v.field.FieldList[14 - NumI]);
-                card.transform.position = v.field.FieldList[14 - NumI].position;
-            }
-
-        }
-        else if (PorE == "NF")
-        {
-            if (v.ImMorN)
-            {
-                card.Init(cardID, false, NumI, true, true, true);
                 card.transform.SetParent(v.field.FieldList[NumI]);
                 card.transform.position = v.field.FieldList[NumI].position;
-            }
-            else
-            {
-                card.Init(cardID, false, NumI, true, true, true);
-                card.transform.SetParent(v.field.FieldList[14 - NumI]);
-                card.transform.position = v.field.FieldList[14 - NumI].position;
             }
         }
         card.model.OriginalCM = cm;

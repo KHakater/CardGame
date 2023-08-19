@@ -523,7 +523,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         foreach (DropPlace d in field.MirrorFieldList)
         {
-            if (d.transform.childCount == 0) continue;
+            if (d.transform.childCount == 0) continue;//鏡があるなら続行
             string s = "?";
             if (ImMorN)
             {
@@ -533,17 +533,18 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 s = "N";
             }
-            if (d.Num > 21 && d.Num < 28)//Master側
+            int x = d.Num - 22;
+            if (x >= 0 && x <= 6)//手前側
             {
-                for (int i = 22; i < 28; i++)
+                for (int i = 0; i < 7; i++)
                 {
-                    if (field.MirrorFieldList[i - 22].transform.childCount == 0) continue;
-                    var n = 2 * d.Num - i;
+                    if (field.MirrorFieldList[i].transform.childCount == 0) continue;
+                    var n = 2 * x - i;
                     if (n >= 0 && n <= 6)
                     {
                         if (field.MirrorFieldList[n].transform.childCount == 0)
                         {
-                            cardCreate.CreateMirror(n, true, s + HandNameNum, true);
+                            cardCreate.CreateMirror(n + 22, true, s + HandNameNum, true);
                             //コピーされた鏡を置く処理
                             HandNameNum += 1;
                         }
@@ -552,30 +553,30 @@ public class GameManager : MonoBehaviourPunCallbacks
                 for (int ii = 0; ii < 5; ii++)
                 {
                     if (field.FieldList[ii].transform.childCount == 0) continue;
-                    var n = 2 * d.Num - 45 - ii;
-                    if (n >= 0 && 2 * n <= 4)
+                    var n = 2 * x - ii - 1;//反対側のフィールドの位置
+                    if (n >= 0 && n <= 4)
                     {
                         if (field.FieldList[n].childCount == 0)
                         {
                             var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
-                            cardCreate.CreateKyouzou(v.CardID, n, "MF", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
+                            cardCreate.CreateKyouzou(v.CardID, n, "TEMAE", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
                             //コピーされたカードを置く処理
                             HandNameNum += 1;
                         }
                     }
                 }
             }
-            if (d.Num > 33 && d.Num < 40)//非Master側
+            if (x >= 12 && x <= 17)//奥側
             {
-                for (int i = 34; i < 40; i++)
+                for (int i = 12; i < 18; i++)
                 {
-                    if (field.MirrorFieldList[i - 22].transform.childCount == 0) continue;
-                    var n = 2 * d.Num - i;
-                    if (n >= 12 && n <= 17)//ほんとにこの数値かは謎
+                    if (field.MirrorFieldList[i].transform.childCount == 0) continue;
+                    var n = 2 * x - i;
+                    if (n >= 12 && n <= 17)//鏡と反対の位置が
                     {
                         if (field.MirrorFieldList[n].transform.childCount == 0)
                         {
-                            cardCreate.CreateMirror(n, true, s + HandNameNum, true);
+                            cardCreate.CreateMirror(n + 22, false, s + HandNameNum, true);
                             //コピーされた鏡を置く処理
                             HandNameNum += 1;
                         }
@@ -583,14 +584,17 @@ public class GameManager : MonoBehaviourPunCallbacks
                 }
                 for (int ii = 10; ii < 15; ii++)
                 {
+                    Debug.Log("p");
                     if (field.FieldList[ii].transform.childCount == 0) continue;
-                    var n = 2 * d.Num - 49 - ii;
+                    var n = 2 * x - 5 - ii;
                     if (n >= 10 && n <= 15)
                     {
+                        Debug.Log("q");
                         if (field.FieldList[n].childCount == 0)
                         {
+                            Debug.Log("r" + n.ToString());
                             var v = field.FieldList[ii].GetChild(0).GetComponent<CardController>().model;
-                            cardCreate.CreateKyouzou(v.CardID, n, "NF", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
+                            cardCreate.CreateKyouzou(v.CardID, n, "OKU", s + HandNameNum, field.FieldList[ii].GetChild(0).GetComponent<CardController>().model);
                             //コピーされたカードを置く処理
                             HandNameNum += 1;
                         }
