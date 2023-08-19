@@ -612,19 +612,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool CanSummon(CardModel v, int Num)
     {
         if (!(20 <= v.CardPlace && v.CardPlace <= 21)) return false;//手札からのみ
-        Debug.Log("1");
         if (field.FieldList[Num].transform.childCount != 0) return false;
-        Debug.Log("2");
         if (isPlayerField(Num))
         {
-            Debug.Log("3");
             if (Activation(v.MastersCard, v.NeedMana))
             {
                 return true;
             }
-            Debug.Log("4");
         }
-        Debug.Log("5");
         return false;
     }
 }
